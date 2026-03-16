@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Situation Awareness Agent</title>
+  <style>
+    :root {
+      --nvidia-green: #76b900;
+      --nvidia-green-dark: #5a8f00;
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e8e8f0;
+      --text-muted: #8888aa;
+      --red: #ff4444;
+      --orange: #ff9500;
+      --green: #30d158;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--nvidia-green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .nvidia-badge {
+      font-size: 0.7rem;
+      color: var(--nvidia-green);
+      border: 1px solid var(--nvidia-green);
+      border-radius: 20px;
+      padding: 3px 10px;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* ── Main ── */
+    main {
+      width: 100%;
+      max-width: 720px;
+      padding: 48px 24px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .hero {
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .hero h1 span { color: var(--nvidia-green); }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* ── Input card ── */
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .input-card label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 14px 16px;
+      resize: vertical;
+      min-height: 100px;
+      width: 100%;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--nvidia-green);
+    }
+    textarea::placeholder { color: var(--text-muted); }
+
+    /* ── Scenarios ── */
+    .scenarios-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .scenarios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .scenario-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      transition: all 0.15s;
+    }
+    .scenario-btn:hover {
+      border-color: var(--nvidia-green);
+      color: var(--nvidia-green);
+    }
+
+    /* ── Analyze button ── */
+    .analyze-btn {
+      background: var(--nvidia-green);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px;
+      width: 100%;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+    .analyze-btn:hover { background: var(--nvidia-green-dark); }
+    .analyze-btn:active { transform: scale(0.99); }
+    .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Loading ── */
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      justify-content: center;
+      padding: 8px 0;
+    }
+    .loading.visible { display: flex; }
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--nvidia-green);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results ── */
+    #results { display: none; flex-direction: column; gap: 16px; }
+    #results.visible { display: flex; }
+
+    /* ── SOS Banner ── */
+    .sos-banner {
+      background: rgba(255, 68, 68, 0.1);
+      border: 2px solid var(--red);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      animation: pulse-border 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(255,68,68,0); }
+    }
+    .sos-text { flex: 1; }
+    .sos-text h3 { color: var(--red); font-size: 1rem; margin-bottom: 4px; }
+    .sos-text p { color: var(--text-muted); font-size: 0.85rem; }
+    .sos-call-btn {
+      background: var(--red);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 10px 20px;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    /* ── Risk card ── */
+    .risk-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .risk-meter {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+    .risk-meter svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+    .risk-meter circle {
+      fill: none;
+      stroke: var(--surface2);
+      stroke-width: 6;
+    }
+    .risk-arc {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 180;
+      stroke-dashoffset: 180;
+      transition: stroke-dashoffset 1s ease, stroke 0.4s;
+    }
+    .risk-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transform: rotate(0deg);
+    }
+    .risk-icon { font-size: 1.2rem; margin-bottom: 1px; }
+    .risk-info h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .risk-badge {
+      display: inline-block;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      text-transform: uppercase;
+    }
+    .risk-badge.low { background: rgba(48,209,88,0.15); color: var(--green); }
+    .risk-badge.medium { background: rgba(255,149,0,0.15); color: var(--orange); }
+    .risk-badge.high { background: rgba(255,68,68,0.15); color: var(--red); }
+    .situation-type {
+      margin-top: 6px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: capitalize;
+    }
+
+    /* ── Summary card ── */
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .card-label {
+      font-size: 0.75rem;
+      color: var(--nvidia-green);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .summary-text {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Actions card ── */
+    .actions-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .action-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .action-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .action-check {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .action-check.checked {
+      background: var(--nvidia-green);
+      border-color: var(--nvidia-green);
+    }
+    .action-check.checked::after { content: "✓"; color: #000; font-size: 12px; font-weight: 800; }
+    .action-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      transition: opacity 0.2s;
+    }
+    .action-item.done .action-text {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+    .priority-now {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--red);
+      background: rgba(255,68,68,0.1);
+      border-radius: 4px;
+      padding: 1px 5px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* ── Message card ── */
+    .message-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .message-bubble {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text);
+      margin: 8px 0 14px;
+      border-left: 3px solid var(--nvidia-green);
+      font-style: italic;
+    }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .copy-btn:hover { border-color: var(--nvidia-green); color: var(--nvidia-green); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+    /* ── Reassurance card ── */
+    .reassurance-card {
+      background: linear-gradient(135deg, rgba(118,185,0,0.08), rgba(118,185,0,0.02));
+      border: 1px solid rgba(118,185,0,0.25);
+      border-radius: 14px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .reassurance-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .reassurance-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+
+    /* ── Error ── */
+    .error-card {
+      background: rgba(255,68,68,0.08);
+      border: 1px solid rgba(255,68,68,0.3);
+      border-radius: 14px;
+      padding: 18px 24px;
+      color: var(--red);
+      font-size: 0.9rem;
+      display: none;
+    }
+    .error-card.visible { display: block; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: auto;
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+    footer a { color: var(--nvidia-green); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    Situation Awareness Agent
+  </div>
+  <span class="nvidia-badge">POWERED BY NVIDIA NEMOTRON</span>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Turn uncertainty into <span>clear action</span></h1>
+    <p>Describe any situation — risky, uncertain, or stressful. Our AI agent assesses risk and tells you exactly what to do next.</p>
+  </div>
+
+  <div class="input-card">
+    <label>Describe your situation</label>
+    <textarea id="situation-input" placeholder="e.g. I think someone is following me on my way home..."></textarea>
+
+    <div>
+      <div class="scenarios-label">Quick scenarios</div>
+      <div class="scenarios" id="scenarios">
+        <button class="scenario-btn" data-scenario="I think someone is following me at night">👣 Being followed</button>
+        <button class="scenario-btn" data-scenario="I got a text saying my bank account is locked and I need to click a link">📱 Suspicious text</button>
+        <button class="scenario-btn" data-scenario="Someone is trying to open my front door at night">🚪 Door at night</button>
+        <button class="scenario-btn" data-scenario="I just got into a minor car accident on the highway">🚗 Car accident</button>
+        <button class="scenario-btn" data-scenario="I'm feeling really overwhelmed and don't know how to cope">🧠 Mental health</button>
+        <button class="scenario-btn" data-scenario="I found a suspicious package left outside my building">📦 Suspicious package</button>
+      </div>
+    </div>
+
+    <button class="analyze-btn" id="analyze-btn">Analyze Situation</button>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      Nemotron is assessing your situation...
+    </div>
+  </div>
+
+  <div class="error-card" id="error-card"></div>
+
+  <div id="results">
+    <div class="sos-banner" id="sos-banner" style="display:none;">
+      <div class="sos-text">
+        <h3>⚠️ High Risk Situation Detected</h3>
+        <p>Your safety comes first. Call emergency services if you are in immediate danger.</p>
+      </div>
+      <a href="tel:911" class="sos-call-btn">📞 Call 911</a>
+    </div>
+
+    <div class="risk-card">
+      <div class="risk-meter">
+        <svg viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="28" />
+          <circle class="risk-arc" id="risk-arc" cx="36" cy="36" r="28" />
+        </svg>
+        <div class="risk-label" id="risk-label">
+          <span class="risk-icon" id="risk-icon">—</span>
+        </div>
+      </div>
+      <div class="risk-info">
+        <h3>Risk Assessment</h3>
+        <span class="risk-badge" id="risk-badge">—</span>
+        <div class="situation-type" id="situation-type"></div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="card-label">Assessment</div>
+      <div class="summary-text" id="summary-text"></div>
+    </div>
+
+    <div class="actions-card">
+      <div class="card-label">Action Plan — Do These Now</div>
+      <ul class="action-list" id="action-list"></ul>
+    </div>
+
+    <div class="message-card">
+      <div class="card-label">Message to Send</div>
+      <div class="message-bubble" id="message-bubble"></div>
+      <button class="copy-btn" id="copy-btn">
+        <span id="copy-icon">📋</span>
+        <span id="copy-text">Copy message</span>
+      </button>
+    </div>
+
+    <div class="reassurance-card" id="reassurance-card">
+      <div class="reassurance-icon">💚</div>
+      <div class="reassurance-text" id="reassurance-text"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  This is a hackathon prototype. For emergencies, always contact local emergency services immediately. &nbsp;|&nbsp;
+  Built with <a href="https://www.nvidia.com/en-us/ai/" target="_blank">NVIDIA Nemotron</a> · Agents for Impact @ SJSU
+</footer>
+
+<script>
+  const input = document.getElementById("situation-input");
+  const analyzeBtn = document.getElementById("analyze-btn");
+  const loading = document.getElementById("loading");
+  const results = document.getElementById("results");
+  const errorCard = document.getElementById("error-card");
+
+  // Scenario quick-fill
+  document.getElementById("scenarios").addEventListener("click", (e) => {
+    const btn = e.target.closest(".scenario-btn");
+    if (!btn) return;
+    input.value = btn.dataset.scenario;
+    input.focus();
+  });
+
+  // Analyze
+  analyzeBtn.addEventListener("click", analyze);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) analyze();
+  });
+
+  async function analyze() {
+    const situation = input.value.trim();
+    if (!situation) { input.focus(); return; }
+
+    setLoading(true);
+    hideResults();
+    hideError();
+
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ situation }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Unknown error");
+      renderResults(data);
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderResults(data) {
+    const risk = (data.risk_level || "low").toLowerCase();
+
+    // SOS banner
+    const sosBanner = document.getElementById("sos-banner");
+    sosBanner.style.display = risk === "high" ? "flex" : "none";
+
+    // Risk arc
+    const arc = document.getElementById("risk-arc");
+    const arcLength = { low: 60, medium: 120, high: 175 }[risk] ?? 60;
+    const color = { low: "#30d158", medium: "#ff9500", high: "#ff4444" }[risk] ?? "#76b900";
+    arc.style.stroke = color;
+    arc.style.strokeDashoffset = 180 - arcLength;
+
+    // Risk icon
+    const icons = { low: "✅", medium: "⚠️", high: "🆘" };
+    document.getElementById("risk-icon").textContent = icons[risk] ?? "❓";
+
+    // Risk badge
+    const badge = document.getElementById("risk-badge");
+    badge.textContent = risk.toUpperCase();
+    badge.className = `risk-badge ${risk}`;
+
+    // Situation type
+    const typeEl = document.getElementById("situation-type");
+    typeEl.textContent = (data.situation_type || "").replace(/_/g, " ");
+
+    // Summary
+    document.getElementById("summary-text").textContent = data.summary || "";
+
+    // Actions
+    const list = document.getElementById("action-list");
+    list.innerHTML = "";
+    (data.actions || []).forEach((action, i) => {
+      const li = document.createElement("li");
+      li.className = "action-item";
+      li.innerHTML = `
+        <div class="action-check" id="check-${i}"></div>
+        <div>
+          ${i === 0 && risk !== "low" ? '<span class="priority-now">DO NOW</span><br>' : ""}
+          <span class="action-text">${escapeHtml(action)}</span>
+        </div>
+      `;
+      li.addEventListener("click", () => toggleAction(li, i));
+      list.appendChild(li);
+    });
+
+    // Message
+    document.getElementById("message-bubble").textContent = data.message || "";
+
+    // Reassurance
+    document.getElementById("reassurance-text").textContent = data.reassurance || "";
+
+    results.classList.add("visible");
+    results.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function toggleAction(li, i) {
+    li.classList.toggle("done");
+    const check = document.getElementById(`check-${i}`);
+    check.classList.toggle("checked");
+  }
+
+  // Copy message
+  document.getElementById("copy-btn").addEventListener("click", async () => {
+    const msg = document.getElementById("message-bubble").textContent;
+    try {
+      await navigator.clipboard.writeText(msg);
+      const btn = document.getElementById("copy-btn");
+      document.getElementById("copy-text").textContent = "Copied!";
+      document.getElementById("copy-icon").textContent = "✅";
+      btn.classList.add("copied");
+      setTimeout(() => {
+        document.getElementById("copy-text").textContent = "Copy message";
+        document.getElementById("copy-icon").textContent = "📋";
+        btn.classList.remove("copied");
+      }, 2000);
+    } catch {}
+  });
+
+  function setLoading(on) {
+    analyzeBtn.disabled = on;
+    analyzeBtn.textContent = on ? "Analyzing..." : "Analyze Situation";
+    loading.classList.toggle("visible", on);
+  }
+  function hideResults() { results.classList.remove("visible"); }
+  function hideError() { errorCard.classList.remove("visible"); }
+  function showError(msg) {
+    errorCard.textContent = `Error: ${msg}`;
+    errorCard.classList.add("visible");
+  }
+  function escapeHtml(str) {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+</script>
+
+</body>
+</html>

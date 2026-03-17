@@ -155,14 +155,22 @@ app.post("/api/analyze-image", async (req, res) => {
 
 // Initial situation analysis
 app.post("/api/analyze", async (req, res) => {
-  const { situation, imageContext } = req.body;
+  const { situation, imageContext, liveVideoContext } = req.body;
   if (!situation || situation.trim().length === 0) {
     return res.status(400).json({ error: "Situation text is required." });
   }
 
   try {
-    const userContent = imageContext
-      ? `${situation.trim()}\n\nAdditional visual context from an image the user uploaded: ${imageContext}`
+    const visualContextParts = [];
+    if (imageContext) {
+      visualContextParts.push(`Additional visual context from an uploaded image: ${imageContext}`);
+    }
+    if (liveVideoContext) {
+      visualContextParts.push(`Additional live camera context from the current scene: ${liveVideoContext}`);
+    }
+
+    const userContent = visualContextParts.length > 0
+      ? `${situation.trim()}\n\n${visualContextParts.join("\n\n")}`
       : situation.trim();
 
     const content = await callNemotron([
@@ -185,15 +193,26 @@ app.post("/api/analyze", async (req, res) => {
 
 // Follow-up / multi-turn conversation
 app.post("/api/followup", async (req, res) => {
-  const { history, question } = req.body;
+  const { history, question, imageContext, liveVideoContext } = req.body;
   if (!question || question.trim().length === 0) {
     return res.status(400).json({ error: "Question is required." });
   }
 
   try {
+    const contextNotes = [];
+    if (imageContext) {
+      contextNotes.push(`Uploaded image context: ${imageContext}`);
+    }
+    if (liveVideoContext) {
+      contextNotes.push(`Live camera context: ${liveVideoContext}`);
+    }
+
     const messages = [
       { role: "system", content: FOLLOWUP_SYSTEM_PROMPT },
       ...(history || []),
+      ...(contextNotes.length > 0
+        ? [{ role: "system", content: `Current visual context for this conversation:\n${contextNotes.join("\n")}` }]
+        : []),
       { role: "user", content: question.trim() },
     ];
 

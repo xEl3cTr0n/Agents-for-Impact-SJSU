@@ -200,6 +200,8 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
+      position: relative;
+      z-index: 2;
     }
     .image-preview-wrap.visible { display: flex; }
     .image-preview {
@@ -237,6 +239,71 @@
       padding: 2px 8px;
     }
     .remove-image-btn:hover { color: var(--red); }
+
+    .video-panel {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .video-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .video-panel-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .video-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .video-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .video-btn:hover { border-color: var(--nvidia-green); }
+    .video-feed {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      background: #050509;
+      border: 1px solid var(--border);
+      object-fit: cover;
+      display: none;
+    }
+    .video-feed.visible { display: block; }
+    .video-status {
+      min-height: 20px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .video-context-box {
+      display: none;
+      background: rgba(118,185,0,0.06);
+      border: 1px solid rgba(118,185,0,0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .video-context-box.visible { display: block; }
 
     /* Guardian */
     .guardian-row {
@@ -1038,6 +1105,19 @@
     </div>
     <canvas id="inline-capture-canvas" style="display:none;"></canvas>
 
+    <div class="video-panel">
+      <div class="video-panel-header">
+        <div class="video-panel-title">Live video feed comprehension</div>
+        <div class="video-actions">
+          <button class="video-btn" id="start-video-btn" type="button">Start camera</button>
+          <button class="video-btn" id="stop-video-btn" type="button">Stop camera</button>
+        </div>
+      </div>
+      <video class="video-feed" id="video-feed" autoplay muted playsinline></video>
+      <div class="video-status" id="video-status">Camera is off.</div>
+      <div class="video-context-box" id="video-context-box"></div>
+    </div>
+
     <div class="guardian-row">
       <span class="guardian-label">👤 Guardian</span>
       <input class="guardian-input" id="guardian-input" type="tel" placeholder="Trusted contact phone (e.g. +1 555 0100)" />
@@ -1280,6 +1360,11 @@
   let imageBase64 = null;
   let imageMimeType = null;
   let imageContext = null;
+  let liveVideoContext = null;
+  let liveVideoStream = null;
+  let liveVideoIntervalId = null;
+  let liveVideoAnalysisInFlight = false;
+  let lastVideoAnalysisAt = 0;
 
   const imageFileInput = document.getElementById("image-file-input");
   const imageUploadArea = document.getElementById("image-upload-area");
@@ -1289,6 +1374,11 @@
   const imageAnalyzing = document.getElementById("image-analyzing");
   const imageContextBox = document.getElementById("image-context-box");
   const removeImageBtn = document.getElementById("remove-image-btn");
+  const videoFeed = document.getElementById("video-feed");
+  const startVideoBtn = document.getElementById("start-video-btn");
+  const stopVideoBtn = document.getElementById("stop-video-btn");
+  const videoStatus = document.getElementById("video-status");
+  const videoContextBox = document.getElementById("video-context-box");
 
   imageFileInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
@@ -1331,6 +1421,7 @@
   });
 
   removeImageBtn.addEventListener("click", (e) => {
+    e.preventDefault();
     e.stopPropagation();
     imageBase64 = null; imageMimeType = null; imageContext = null;
     imageFileInput.value = "";
@@ -1344,6 +1435,94 @@
     captureMode = false;
     cameraCaptureBtn.textContent = "📸";
   });
+
+  startVideoBtn.addEventListener("click", startVideoFeed);
+  stopVideoBtn.addEventListener("click", stopVideoFeed);
+
+  async function startVideoFeed() {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      videoStatus.textContent = "Live camera access is not supported in this browser.";
+      return;
+    }
+
+    if (liveVideoStream) {
+      videoStatus.textContent = "Camera is already running.";
+      return;
+    }
+
+    try {
+      liveVideoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+      videoFeed.srcObject = liveVideoStream;
+      videoFeed.classList.add("visible");
+      videoStatus.textContent = "Camera live. Capturing safety context every few seconds.";
+      videoContextBox.classList.remove("visible");
+      liveVideoContext = null;
+      lastVideoAnalysisAt = 0;
+      await captureVideoContext();
+      liveVideoIntervalId = window.setInterval(captureVideoContext, 7000);
+    } catch (error) {
+      videoStatus.textContent = "Could not access the camera. Check permissions and try again.";
+    }
+  }
+
+  function stopVideoFeed() {
+    if (liveVideoIntervalId) {
+      window.clearInterval(liveVideoIntervalId);
+      liveVideoIntervalId = null;
+    }
+    if (liveVideoStream) {
+      liveVideoStream.getTracks().forEach((track) => track.stop());
+      liveVideoStream = null;
+    }
+    videoFeed.srcObject = null;
+    videoFeed.classList.remove("visible");
+    liveVideoContext = null;
+    liveVideoAnalysisInFlight = false;
+    videoStatus.textContent = "Camera is off.";
+    videoContextBox.classList.remove("visible");
+  }
+
+  async function captureVideoContext() {
+    if (!liveVideoStream || liveVideoAnalysisInFlight) return;
+    if (Date.now() - lastVideoAnalysisAt < 5000) return;
+    if (!videoFeed.videoWidth || !videoFeed.videoHeight) return;
+
+    liveVideoAnalysisInFlight = true;
+    videoStatus.textContent = "Camera live. Updating scene understanding...";
+
+    const canvas = document.createElement("canvas");
+    canvas.width = videoFeed.videoWidth;
+    canvas.height = videoFeed.videoHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+    const frameBase64 = canvas.toDataURL("image/jpeg", 0.75).split(",")[1];
+
+    try {
+      const res = await fetch("/api/analyze-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image: frameBase64,
+          mimeType: "image/jpeg",
+          situation: situationInput.value.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.description) {
+        liveVideoContext = data.description;
+        videoContextBox.textContent = "🎥 " + data.description;
+        videoContextBox.classList.add("visible");
+        videoStatus.textContent = "Camera live. Scene context updated.";
+        lastVideoAnalysisAt = Date.now();
+      } else if (data.error) {
+        videoStatus.textContent = data.error;
+      }
+    } catch (error) {
+      videoStatus.textContent = "Live video analysis failed. The feed is still on.";
+    } finally {
+      liveVideoAnalysisInFlight = false;
+    }
+  }
 
   // ── Conversation state ──
   let conversationHistory = [];
@@ -1368,7 +1547,7 @@
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ situation, imageContext }),
+        body: JSON.stringify({ situation, imageContext, liveVideoContext }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Unknown error");
@@ -1510,7 +1689,7 @@
       const res = await fetch("/api/followup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ history: conversationHistory, question }),
+        body: JSON.stringify({ history: conversationHistory, question, imageContext, liveVideoContext }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);

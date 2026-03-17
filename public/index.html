@@ -31,7 +31,6 @@
       align-items: center;
     }
 
-    /* ── Header ── */
     header {
       width: 100%;
       padding: 18px 32px;
@@ -47,16 +46,12 @@
       gap: 10px;
       font-size: 1.1rem;
       font-weight: 700;
-      letter-spacing: -0.3px;
     }
     .logo-icon {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       background: var(--nvidia-green);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: 16px;
     }
     .nvidia-badge {
@@ -69,19 +64,16 @@
       font-weight: 600;
     }
 
-    /* ── Main ── */
     main {
       width: 100%;
       max-width: 720px;
       padding: 48px 24px 64px;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 28px;
     }
 
-    .hero {
-      text-align: center;
-    }
+    .hero { text-align: center; }
     .hero h1 {
       font-size: 2rem;
       font-weight: 800;
@@ -90,13 +82,8 @@
       margin-bottom: 10px;
     }
     .hero h1 span { color: var(--nvidia-green); }
-    .hero p {
-      color: var(--text-muted);
-      font-size: 1rem;
-      line-height: 1.6;
-    }
+    .hero p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; }
 
-    /* ── Input card ── */
     .input-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -106,7 +93,14 @@
       flex-direction: column;
       gap: 16px;
     }
-    .input-card label {
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .textarea-wrap { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .input-label {
       font-size: 0.85rem;
       color: var(--text-muted);
       font-weight: 600;
@@ -122,18 +116,135 @@
       line-height: 1.6;
       padding: 14px 16px;
       resize: vertical;
-      min-height: 100px;
+      min-height: 90px;
       width: 100%;
       transition: border-color 0.2s;
       font-family: inherit;
     }
-    textarea:focus {
-      outline: none;
-      border-color: var(--nvidia-green);
-    }
+    textarea:focus { outline: none; border-color: var(--nvidia-green); }
     textarea::placeholder { color: var(--text-muted); }
 
-    /* ── Scenarios ── */
+    /* Voice button */
+    .voice-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.4rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      align-self: flex-end;
+    }
+    .voice-btn:hover { border-color: var(--nvidia-green); color: var(--nvidia-green); }
+    .voice-btn.listening {
+      background: rgba(255, 68, 68, 0.15);
+      border-color: var(--red);
+      color: var(--red);
+      animation: mic-pulse 1s ease-in-out infinite;
+    }
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(255,68,68,0); }
+    }
+
+    /* Image upload */
+    .image-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .image-upload-area:hover { border-color: var(--nvidia-green); }
+    .image-upload-area.has-image { border-color: var(--nvidia-green); border-style: solid; }
+    .image-upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .image-upload-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .image-preview-wrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .image-preview-wrap.visible { display: flex; }
+    .image-preview {
+      max-height: 160px;
+      max-width: 100%;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .image-analyzing {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--nvidia-green);
+    }
+    .image-analyzing.visible { display: flex; }
+    .image-context-box {
+      background: rgba(118,185,0,0.06);
+      border: 1px solid rgba(118,185,0,0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      display: none;
+      text-align: left;
+    }
+    .image-context-box.visible { display: block; }
+    .remove-image-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+    }
+    .remove-image-btn:hover { color: var(--red); }
+
+    /* Guardian */
+    .guardian-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .guardian-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .guardian-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      flex: 1;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .guardian-input:focus { outline: none; border-color: var(--nvidia-green); }
+    .guardian-input::placeholder { color: var(--text-muted); }
+
+    /* Scenarios */
     .scenarios-label {
       font-size: 0.8rem;
       color: var(--text-muted);
@@ -141,11 +252,7 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
-    .scenarios {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .scenarios { display: flex; flex-wrap: wrap; gap: 8px; }
     .scenario-btn {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -156,12 +263,8 @@
       padding: 6px 14px;
       transition: all 0.15s;
     }
-    .scenario-btn:hover {
-      border-color: var(--nvidia-green);
-      color: var(--nvidia-green);
-    }
+    .scenario-btn:hover { border-color: var(--nvidia-green); color: var(--nvidia-green); }
 
-    /* ── Analyze button ── */
     .analyze-btn {
       background: var(--nvidia-green);
       border: none;
@@ -173,13 +276,11 @@
       padding: 14px;
       width: 100%;
       transition: background 0.2s, transform 0.1s;
-      letter-spacing: 0.2px;
     }
     .analyze-btn:hover { background: var(--nvidia-green-dark); }
     .analyze-btn:active { transform: scale(0.99); }
     .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Loading ── */
     .loading {
       display: none;
       align-items: center;
@@ -187,12 +288,10 @@
       color: var(--text-muted);
       font-size: 0.9rem;
       justify-content: center;
-      padding: 8px 0;
     }
     .loading.visible { display: flex; }
     .spinner {
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       border: 2px solid var(--border);
       border-top-color: var(--nvidia-green);
       border-radius: 50%;
@@ -200,11 +299,10 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Results ── */
     #results { display: none; flex-direction: column; gap: 16px; }
     #results.visible { display: flex; }
 
-    /* ── SOS Banner ── */
+    /* SOS */
     .sos-banner {
       background: rgba(255, 68, 68, 0.1);
       border: 2px solid var(--red);
@@ -220,9 +318,9 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); }
       50% { box-shadow: 0 0 0 8px rgba(255,68,68,0); }
     }
-    .sos-text { flex: 1; }
     .sos-text h3 { color: var(--red); font-size: 1rem; margin-bottom: 4px; }
     .sos-text p { color: var(--text-muted); font-size: 0.85rem; }
+    .sos-actions { display: flex; gap: 10px; flex-shrink: 0; }
     .sos-call-btn {
       background: var(--red);
       border: none;
@@ -231,13 +329,26 @@
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 700;
-      padding: 10px 20px;
-      white-space: nowrap;
+      padding: 10px 18px;
       text-decoration: none;
       display: inline-block;
+      white-space: nowrap;
+    }
+    .sos-guardian-btn {
+      background: transparent;
+      border: 1px solid var(--red);
+      border-radius: 10px;
+      color: var(--red);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 10px 18px;
+      text-decoration: none;
+      display: none;
+      white-space: nowrap;
     }
 
-    /* ── Risk card ── */
+    /* Risk */
     .risk-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -247,40 +358,20 @@
       align-items: center;
       gap: 20px;
     }
-    .risk-meter {
-      position: relative;
-      width: 72px;
-      height: 72px;
-      flex-shrink: 0;
-    }
+    .risk-meter { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
     .risk-meter svg { width: 72px; height: 72px; transform: rotate(-90deg); }
-    .risk-meter circle {
-      fill: none;
-      stroke: var(--surface2);
-      stroke-width: 6;
-    }
+    .risk-meter circle { fill: none; stroke: var(--surface2); stroke-width: 6; }
     .risk-arc {
-      fill: none;
-      stroke-width: 6;
-      stroke-linecap: round;
-      stroke-dasharray: 180;
-      stroke-dashoffset: 180;
+      fill: none; stroke-width: 6; stroke-linecap: round;
+      stroke-dasharray: 180; stroke-dashoffset: 180;
       transition: stroke-dashoffset 1s ease, stroke 0.4s;
     }
     .risk-label {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      transform: rotate(0deg);
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
     }
-    .risk-icon { font-size: 1.2rem; margin-bottom: 1px; }
+    .risk-icon { font-size: 1.3rem; }
     .risk-info h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
     .risk-badge {
       display: inline-block;
@@ -294,15 +385,9 @@
     .risk-badge.low { background: rgba(48,209,88,0.15); color: var(--green); }
     .risk-badge.medium { background: rgba(255,149,0,0.15); color: var(--orange); }
     .risk-badge.high { background: rgba(255,68,68,0.15); color: var(--red); }
-    .situation-type {
-      margin-top: 6px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      text-transform: capitalize;
-    }
+    .situation-type { margin-top: 6px; font-size: 0.82rem; color: var(--text-muted); text-transform: capitalize; }
 
-    /* ── Summary card ── */
-    .summary-card {
+    .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -316,81 +401,41 @@
       text-transform: uppercase;
       margin-bottom: 10px;
     }
-    .summary-text {
-      font-size: 0.95rem;
-      color: var(--text);
-      line-height: 1.6;
-    }
 
-    /* ── Actions card ── */
-    .actions-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 24px;
-    }
-    .action-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
-    .action-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      cursor: pointer;
-    }
+    .summary-text { font-size: 0.95rem; line-height: 1.6; }
+
+    /* Actions */
+    .action-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .action-item { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
     .action-check {
-      width: 22px;
-      height: 22px;
+      width: 22px; height: 22px;
       border: 2px solid var(--border);
       border-radius: 6px;
       flex-shrink: 0;
       margin-top: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
     }
-    .action-check.checked {
-      background: var(--nvidia-green);
-      border-color: var(--nvidia-green);
-    }
+    .action-check.checked { background: var(--nvidia-green); border-color: var(--nvidia-green); }
     .action-check.checked::after { content: "✓"; color: #000; font-size: 12px; font-weight: 800; }
-    .action-text {
-      font-size: 0.95rem;
-      line-height: 1.5;
-      transition: opacity 0.2s;
-    }
-    .action-item.done .action-text {
-      opacity: 0.45;
-      text-decoration: line-through;
-    }
+    .action-text { font-size: 0.95rem; line-height: 1.5; transition: opacity 0.2s; }
+    .action-item.done .action-text { opacity: 0.4; text-decoration: line-through; }
     .priority-now {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--red);
-      background: rgba(255,68,68,0.1);
-      border-radius: 4px;
-      padding: 1px 5px;
-      flex-shrink: 0;
-      margin-top: 4px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--red); background: rgba(255,68,68,0.1);
+      border-radius: 4px; padding: 1px 5px; flex-shrink: 0; margin-top: 4px;
     }
 
-    /* ── Message card ── */
-    .message-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 24px;
-    }
+    /* Message */
     .message-bubble {
       background: var(--surface2);
       border-radius: 10px;
       padding: 14px 16px;
       font-size: 0.95rem;
       line-height: 1.6;
-      color: var(--text);
-      margin: 8px 0 14px;
       border-left: 3px solid var(--nvidia-green);
       font-style: italic;
+      margin-bottom: 12px;
     }
     .copy-btn {
       background: transparent;
@@ -401,27 +446,90 @@
       font-size: 0.85rem;
       padding: 8px 16px;
       transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      display: flex; align-items: center; gap: 6px;
     }
     .copy-btn:hover { border-color: var(--nvidia-green); color: var(--nvidia-green); }
     .copy-btn.copied { color: var(--green); border-color: var(--green); }
 
-    /* ── Reassurance card ── */
+    /* Reassurance */
     .reassurance-card {
       background: linear-gradient(135deg, rgba(118,185,0,0.08), rgba(118,185,0,0.02));
       border: 1px solid rgba(118,185,0,0.25);
       border-radius: 14px;
       padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: flex; align-items: center; gap: 14px;
     }
     .reassurance-icon { font-size: 1.6rem; flex-shrink: 0; }
-    .reassurance-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+    .reassurance-text { font-size: 0.9rem; line-height: 1.5; }
 
-    /* ── Error ── */
+    /* Follow-up chat */
+    .followup-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .chat-history {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      max-width: 90%;
+    }
+    .chat-bubble.user {
+      background: rgba(118,185,0,0.12);
+      border: 1px solid rgba(118,185,0,0.2);
+      align-self: flex-end;
+      color: var(--text);
+    }
+    .chat-bubble.agent {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      color: var(--text);
+    }
+    .followup-input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .followup-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .followup-input:focus { outline: none; border-color: var(--nvidia-green); }
+    .followup-input::placeholder { color: var(--text-muted); }
+    .followup-send-btn {
+      background: var(--nvidia-green);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 10px 20px;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .followup-send-btn:hover { background: var(--nvidia-green-dark); }
+    .followup-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
     .error-card {
       background: rgba(255,68,68,0.08);
       border: 1px solid rgba(255,68,68,0.3);
@@ -433,7 +541,6 @@
     }
     .error-card.visible { display: block; }
 
-    /* ── Footer ── */
     footer {
       margin-top: auto;
       padding: 24px;
@@ -463,8 +570,32 @@
   </div>
 
   <div class="input-card">
-    <label>Describe your situation</label>
-    <textarea id="situation-input" placeholder="e.g. I think someone is following me on my way home..."></textarea>
+    <div class="input-row">
+      <div class="textarea-wrap">
+        <label class="input-label">Describe your situation</label>
+        <textarea id="situation-input" placeholder="e.g. I think someone is following me on my way home..."></textarea>
+      </div>
+      <button class="voice-btn" id="voice-btn" title="Speak your situation">🎙️</button>
+    </div>
+
+    <!-- Image upload -->
+    <div class="image-upload-area" id="image-upload-area">
+      <input type="file" id="image-file-input" accept="image/*" />
+      <div class="image-upload-label" id="image-upload-label">📷 Add a photo for better analysis (optional)</div>
+      <div class="image-preview-wrap" id="image-preview-wrap">
+        <img class="image-preview" id="image-preview" src="" alt="Uploaded image" />
+        <div class="image-analyzing" id="image-analyzing">
+          <div class="spinner"></div> Nemotron Vision is analyzing your image...
+        </div>
+        <div class="image-context-box" id="image-context-box"></div>
+        <button class="remove-image-btn" id="remove-image-btn">✕ Remove image</button>
+      </div>
+    </div>
+
+    <div class="guardian-row">
+      <span class="guardian-label">👤 Guardian</span>
+      <input class="guardian-input" id="guardian-input" type="tel" placeholder="Trusted contact phone (e.g. +1 555 0100)" />
+    </div>
 
     <div>
       <div class="scenarios-label">Quick scenarios</div>
@@ -493,7 +624,10 @@
         <h3>⚠️ High Risk Situation Detected</h3>
         <p>Your safety comes first. Call emergency services if you are in immediate danger.</p>
       </div>
-      <a href="tel:911" class="sos-call-btn">📞 Call 911</a>
+      <div class="sos-actions">
+        <a id="guardian-sms-btn" class="sos-guardian-btn" href="#">📲 Alert Guardian</a>
+        <a href="tel:911" class="sos-call-btn">📞 Call 911</a>
+      </div>
     </div>
 
     <div class="risk-card">
@@ -502,7 +636,7 @@
           <circle cx="36" cy="36" r="28" />
           <circle class="risk-arc" id="risk-arc" cx="36" cy="36" r="28" />
         </svg>
-        <div class="risk-label" id="risk-label">
+        <div class="risk-label">
           <span class="risk-icon" id="risk-icon">—</span>
         </div>
       </div>
@@ -513,17 +647,17 @@
       </div>
     </div>
 
-    <div class="summary-card">
+    <div class="card">
       <div class="card-label">Assessment</div>
       <div class="summary-text" id="summary-text"></div>
     </div>
 
-    <div class="actions-card">
+    <div class="card">
       <div class="card-label">Action Plan — Do These Now</div>
       <ul class="action-list" id="action-list"></ul>
     </div>
 
-    <div class="message-card">
+    <div class="card">
       <div class="card-label">Message to Send</div>
       <div class="message-bubble" id="message-bubble"></div>
       <button class="copy-btn" id="copy-btn">
@@ -532,9 +666,19 @@
       </button>
     </div>
 
-    <div class="reassurance-card" id="reassurance-card">
+    <div class="reassurance-card">
       <div class="reassurance-icon">💚</div>
       <div class="reassurance-text" id="reassurance-text"></div>
+    </div>
+
+    <!-- Follow-up chat -->
+    <div class="followup-card">
+      <div class="card-label" style="margin-bottom:0;">Ask a follow-up question</div>
+      <div class="chat-history" id="chat-history"></div>
+      <div class="followup-input-row">
+        <input class="followup-input" id="followup-input" placeholder="e.g. What if I can't call anyone?" />
+        <button class="followup-send-btn" id="followup-send-btn">Ask Nemotron</button>
+      </div>
     </div>
   </div>
 </main>
@@ -545,42 +689,165 @@
 </footer>
 
 <script>
-  const input = document.getElementById("situation-input");
+  const situationInput = document.getElementById("situation-input");
   const analyzeBtn = document.getElementById("analyze-btn");
   const loading = document.getElementById("loading");
   const results = document.getElementById("results");
   const errorCard = document.getElementById("error-card");
+  const guardianInput = document.getElementById("guardian-input");
+
+  // Persist guardian number
+  guardianInput.value = localStorage.getItem("guardian_number") || "";
+  guardianInput.addEventListener("input", () => {
+    localStorage.setItem("guardian_number", guardianInput.value);
+  });
 
   // Scenario quick-fill
   document.getElementById("scenarios").addEventListener("click", (e) => {
     const btn = e.target.closest(".scenario-btn");
     if (!btn) return;
-    input.value = btn.dataset.scenario;
-    input.focus();
+    situationInput.value = btn.dataset.scenario;
+    situationInput.focus();
   });
 
-  // Analyze
+  // ── Voice input ──
+  const voiceBtn = document.getElementById("voice-btn");
+  let recognition = null;
+
+  if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (e) => {
+      const transcript = Array.from(e.results).map(r => r[0].transcript).join("");
+      situationInput.value = transcript;
+    };
+    recognition.onend = () => {
+      voiceBtn.classList.remove("listening");
+      voiceBtn.textContent = "🎙️";
+    };
+    recognition.onerror = () => {
+      voiceBtn.classList.remove("listening");
+      voiceBtn.textContent = "🎙️";
+    };
+
+    voiceBtn.addEventListener("click", () => {
+      if (voiceBtn.classList.contains("listening")) {
+        recognition.stop();
+      } else {
+        recognition.start();
+        voiceBtn.classList.add("listening");
+        voiceBtn.textContent = "⏹️";
+      }
+    });
+  } else {
+    voiceBtn.title = "Voice input not supported in this browser";
+    voiceBtn.style.opacity = "0.4";
+    voiceBtn.style.cursor = "not-allowed";
+  }
+
+  // ── Image upload & vision analysis ──
+  let imageBase64 = null;
+  let imageMimeType = null;
+  let imageContext = null;
+
+  const imageFileInput = document.getElementById("image-file-input");
+  const imageUploadArea = document.getElementById("image-upload-area");
+  const imagePreviewWrap = document.getElementById("image-preview-wrap");
+  const imagePreview = document.getElementById("image-preview");
+  const imageUploadLabel = document.getElementById("image-upload-label");
+  const imageAnalyzing = document.getElementById("image-analyzing");
+  const imageContextBox = document.getElementById("image-context-box");
+  const removeImageBtn = document.getElementById("remove-image-btn");
+
+  imageFileInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    imageMimeType = file.type;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      imageBase64 = dataUrl.split(",")[1];
+
+      imagePreview.src = dataUrl;
+      imageUploadLabel.style.display = "none";
+      imagePreviewWrap.classList.add("visible");
+      imageUploadArea.classList.add("has-image");
+      imageAnalyzing.classList.add("visible");
+      imageContextBox.classList.remove("visible");
+      imageContext = null;
+
+      try {
+        const res = await fetch("/api/analyze-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: imageBase64,
+            mimeType: imageMimeType,
+            situation: situationInput.value.trim(),
+          }),
+        });
+        const data = await res.json();
+        if (data.description) {
+          imageContext = data.description;
+          imageContextBox.textContent = "🔍 " + data.description;
+          imageContextBox.classList.add("visible");
+        }
+      } catch {}
+      imageAnalyzing.classList.remove("visible");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  removeImageBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    imageBase64 = null; imageMimeType = null; imageContext = null;
+    imageFileInput.value = "";
+    imagePreview.src = "";
+    imagePreviewWrap.classList.remove("visible");
+    imageUploadArea.classList.remove("has-image");
+    imageUploadLabel.style.display = "";
+    imageContextBox.classList.remove("visible");
+  });
+
+  // ── Conversation state ──
+  let conversationHistory = [];
+
+  // ── Analyze ──
   analyzeBtn.addEventListener("click", analyze);
-  input.addEventListener("keydown", (e) => {
+  situationInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) analyze();
   });
 
   async function analyze() {
-    const situation = input.value.trim();
-    if (!situation) { input.focus(); return; }
+    const situation = situationInput.value.trim();
+    if (!situation) { situationInput.focus(); return; }
 
     setLoading(true);
     hideResults();
     hideError();
+    conversationHistory = [];
+    document.getElementById("chat-history").innerHTML = "";
 
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ situation }),
+        body: JSON.stringify({ situation, imageContext }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Unknown error");
+
+      // Store initial exchange for follow-up context
+      conversationHistory = [
+        { role: "user", content: situation },
+        { role: "assistant", content: `Situation: ${data.summary}. Risk: ${data.risk_level}. Actions: ${(data.actions||[]).join("; ")}` },
+      ];
+
       renderResults(data);
     } catch (err) {
       showError(err.message);
@@ -592,9 +859,18 @@
   function renderResults(data) {
     const risk = (data.risk_level || "low").toLowerCase();
 
-    // SOS banner
+    // SOS + guardian
     const sosBanner = document.getElementById("sos-banner");
     sosBanner.style.display = risk === "high" ? "flex" : "none";
+    const guardianSmsBtn = document.getElementById("guardian-sms-btn");
+    const guardianNum = guardianInput.value.trim();
+    if (risk === "high" && guardianNum) {
+      const msg = encodeURIComponent(`🚨 I need help. ${data.summary} Please check on me.`);
+      guardianSmsBtn.href = `sms:${guardianNum}?body=${msg}`;
+      guardianSmsBtn.style.display = "inline-block";
+    } else {
+      guardianSmsBtn.style.display = "none";
+    }
 
     // Risk arc
     const arc = document.getElementById("risk-arc");
@@ -603,20 +879,13 @@
     arc.style.stroke = color;
     arc.style.strokeDashoffset = 180 - arcLength;
 
-    // Risk icon
-    const icons = { low: "✅", medium: "⚠️", high: "🆘" };
-    document.getElementById("risk-icon").textContent = icons[risk] ?? "❓";
+    document.getElementById("risk-icon").textContent = { low: "✅", medium: "⚠️", high: "🆘" }[risk] ?? "❓";
 
-    // Risk badge
     const badge = document.getElementById("risk-badge");
     badge.textContent = risk.toUpperCase();
     badge.className = `risk-badge ${risk}`;
 
-    // Situation type
-    const typeEl = document.getElementById("situation-type");
-    typeEl.textContent = (data.situation_type || "").replace(/_/g, " ");
-
-    // Summary
+    document.getElementById("situation-type").textContent = (data.situation_type || "").replace(/_/g, " ");
     document.getElementById("summary-text").textContent = data.summary || "";
 
     // Actions
@@ -632,42 +901,82 @@
           <span class="action-text">${escapeHtml(action)}</span>
         </div>
       `;
-      li.addEventListener("click", () => toggleAction(li, i));
+      li.addEventListener("click", () => {
+        li.classList.toggle("done");
+        document.getElementById(`check-${i}`).classList.toggle("checked");
+      });
       list.appendChild(li);
     });
 
-    // Message
     document.getElementById("message-bubble").textContent = data.message || "";
-
-    // Reassurance
     document.getElementById("reassurance-text").textContent = data.reassurance || "";
 
     results.classList.add("visible");
     results.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function toggleAction(li, i) {
-    li.classList.toggle("done");
-    const check = document.getElementById(`check-${i}`);
-    check.classList.toggle("checked");
-  }
-
-  // Copy message
+  // ── Copy message ──
   document.getElementById("copy-btn").addEventListener("click", async () => {
     const msg = document.getElementById("message-bubble").textContent;
     try {
       await navigator.clipboard.writeText(msg);
-      const btn = document.getElementById("copy-btn");
       document.getElementById("copy-text").textContent = "Copied!";
       document.getElementById("copy-icon").textContent = "✅";
-      btn.classList.add("copied");
+      document.getElementById("copy-btn").classList.add("copied");
       setTimeout(() => {
         document.getElementById("copy-text").textContent = "Copy message";
         document.getElementById("copy-icon").textContent = "📋";
-        btn.classList.remove("copied");
+        document.getElementById("copy-btn").classList.remove("copied");
       }, 2000);
     } catch {}
   });
+
+  // ── Follow-up chat ──
+  const followupInput = document.getElementById("followup-input");
+  const followupSendBtn = document.getElementById("followup-send-btn");
+  const chatHistory = document.getElementById("chat-history");
+
+  followupSendBtn.addEventListener("click", sendFollowup);
+  followupInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendFollowup();
+  });
+
+  async function sendFollowup() {
+    const question = followupInput.value.trim();
+    if (!question || conversationHistory.length === 0) return;
+
+    appendChatBubble(question, "user");
+    followupInput.value = "";
+    followupSendBtn.disabled = true;
+    followupSendBtn.textContent = "...";
+
+    try {
+      const res = await fetch("/api/followup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ history: conversationHistory, question }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      appendChatBubble(data.reply, "agent");
+      conversationHistory.push({ role: "user", content: question });
+      conversationHistory.push({ role: "assistant", content: data.reply });
+    } catch (err) {
+      appendChatBubble(`Error: ${err.message}`, "agent");
+    } finally {
+      followupSendBtn.disabled = false;
+      followupSendBtn.textContent = "Ask Nemotron";
+    }
+  }
+
+  function appendChatBubble(text, role) {
+    const div = document.createElement("div");
+    div.className = `chat-bubble ${role}`;
+    div.textContent = text;
+    chatHistory.appendChild(div);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+  }
 
   function setLoading(on) {
     analyzeBtn.disabled = on;

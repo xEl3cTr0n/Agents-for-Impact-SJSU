@@ -161,7 +161,7 @@
     .image-upload-area {
       border: 2px dashed var(--border);
       border-radius: 10px;
-      padding: 16px;
+      padding: 14px 16px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
@@ -176,6 +176,20 @@
       font-size: 0.85rem;
       color: var(--text-muted);
       pointer-events: none;
+    }
+    .image-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+      pointer-events: none;
+    }
+    .image-action-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding: 3px 10px;
     }
     .image-preview-wrap {
       display: none;
@@ -556,6 +570,209 @@
     }
     footer a { color: var(--nvidia-green); text-decoration: none; }
 
+    /* Video mode button in header */
+    .video-mode-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 7px 14px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .video-mode-btn:hover { border-color: var(--red); color: var(--red); }
+    .video-mode-btn.active { border-color: var(--red); color: var(--red); background: rgba(255,68,68,0.1); }
+
+    /* Video conversation overlay */
+    .video-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+    }
+    .video-overlay.visible { display: flex; }
+    .video-header {
+      width: 100%;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .video-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: live-blink 1.2s ease-in-out infinite;
+    }
+    @keyframes live-blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.2; }
+    }
+    .close-video-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 7px 14px;
+    }
+    .close-video-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .video-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 640px;
+      flex: 1;
+      padding: 20px 20px 0;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    /* Camera feed */
+    .camera-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 16/9;
+    }
+    #camera-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* mirror for front cam */
+    }
+    .camera-status {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: #fff;
+      backdrop-filter: blur(4px);
+    }
+    .camera-snap-overlay {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .camera-snap-overlay.flash { opacity: 0.6; }
+
+    /* Video transcript */
+    .video-transcript {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      min-height: 80px;
+      max-height: 140px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .video-transcript-empty {
+      color: rgba(255,255,255,0.25);
+      font-size: 0.85rem;
+      text-align: center;
+      margin: auto;
+    }
+    .vt-bubble {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      max-width: 88%;
+    }
+    .vt-bubble.user {
+      background: rgba(118,185,0,0.15);
+      border: 1px solid rgba(118,185,0,0.2);
+      align-self: flex-end;
+      color: #d4f0a0;
+    }
+    .vt-bubble.agent {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      align-self: flex-start;
+      color: #e8e8f0;
+    }
+
+    /* Video controls */
+    .video-controls {
+      width: 100%;
+      max-width: 640px;
+      padding: 16px 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .vid-ctrl-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.3rem;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .vid-ctrl-btn:hover { background: rgba(255,255,255,0.15); }
+    .vid-ctrl-btn.active { background: rgba(255,68,68,0.2); border-color: var(--red); }
+
+    .vid-analyze-btn {
+      background: var(--nvidia-green);
+      border: none;
+      border-radius: 50px;
+      color: #000;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 14px 32px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vid-analyze-btn:hover { background: var(--nvidia-green-dark); }
+    .vid-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Hidden canvas for frame capture */
+    #capture-canvas { display: none; }
+
     /* Mental health crisis card */
     .crisis-card {
       background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.05));
@@ -664,8 +881,47 @@
     <div class="logo-icon">🛡️</div>
     Situation Awareness Agent
   </div>
-  <span class="nvidia-badge">POWERED BY NVIDIA NEMOTRON</span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="video-mode-btn" id="video-mode-btn">🎥 Video Mode</button>
+    <span class="nvidia-badge">POWERED BY NVIDIA NEMOTRON</span>
+  </div>
 </header>
+
+<!-- Video conversation overlay -->
+<div class="video-overlay" id="video-overlay">
+  <div class="video-header">
+    <div class="video-header-title">
+      <div class="live-dot"></div>
+      Live Situation Analysis
+    </div>
+    <button class="close-video-btn" id="close-video-btn">✕ Close</button>
+  </div>
+
+  <div class="video-body">
+    <div class="camera-wrap">
+      <video id="camera-feed" autoplay playsinline muted></video>
+      <div class="camera-status" id="camera-status">
+        <div class="live-dot"></div> <span id="camera-status-text">Starting camera...</span>
+      </div>
+      <div class="camera-snap-overlay" id="camera-snap-overlay"></div>
+    </div>
+
+    <div class="video-transcript" id="video-transcript">
+      <div class="video-transcript-empty" id="vt-empty">Hold the mic button and describe what's happening. Nemotron will see your camera and respond.</div>
+    </div>
+  </div>
+
+  <canvas id="capture-canvas"></canvas>
+
+  <div class="video-controls">
+    <button class="vid-ctrl-btn" id="vid-flip-btn" title="Flip camera">🔄</button>
+    <button class="vid-analyze-btn" id="vid-analyze-btn" disabled>
+      <span id="vid-analyze-icon">🎙️</span>
+      <span id="vid-analyze-text">Hold to Speak</span>
+    </button>
+    <button class="vid-ctrl-btn" id="vid-snap-btn" title="Capture & analyze now">📸</button>
+  </div>
+</div>
 
 <main>
   <div class="offline-banner" id="offline-banner">⚠️ You're offline — the app will use cached data. Reconnect for live analysis.</div>
@@ -690,19 +946,29 @@
       <button class="voice-btn" id="voice-btn" title="Speak your situation">🎙️</button>
     </div>
 
-    <!-- Image upload -->
-    <div class="image-upload-area" id="image-upload-area">
-      <input type="file" id="image-file-input" accept="image/*" />
-      <div class="image-upload-label" id="image-upload-label">📷 Add a photo for better analysis (optional)</div>
-      <div class="image-preview-wrap" id="image-preview-wrap">
-        <img class="image-preview" id="image-preview" src="" alt="Uploaded image" />
-        <div class="image-analyzing" id="image-analyzing">
-          <div class="spinner"></div> Nemotron Vision is analyzing your image...
+    <!-- Image upload + camera capture -->
+    <div style="display:flex;gap:10px;">
+      <div class="image-upload-area" id="image-upload-area" style="flex:1;">
+        <input type="file" id="image-file-input" accept="image/*" />
+        <div class="image-upload-label" id="image-upload-label">
+          <div class="image-btn-row" style="justify-content:center;pointer-events:none;">
+            <span class="image-action-badge">📁 Import Photo</span>
+          </div>
         </div>
-        <div class="image-context-box" id="image-context-box"></div>
-        <button class="remove-image-btn" id="remove-image-btn">✕ Remove image</button>
+        <div class="image-preview-wrap" id="image-preview-wrap">
+          <img class="image-preview" id="image-preview" src="" alt="Uploaded image" />
+          <div class="image-analyzing" id="image-analyzing">
+            <div class="spinner"></div> Nemotron Vision is analyzing...
+          </div>
+          <div class="image-context-box" id="image-context-box"></div>
+          <button class="remove-image-btn" id="remove-image-btn">✕ Remove image</button>
+        </div>
       </div>
+      <button class="voice-btn" id="camera-capture-btn" title="Take a photo with your camera" style="width:60px;height:auto;min-height:60px;flex-shrink:0;align-self:stretch;font-size:1.5rem;">📸</button>
     </div>
+    <!-- Hidden camera stream for in-page capture -->
+    <video id="inline-camera-feed" style="display:none;" autoplay playsinline muted></video>
+    <canvas id="inline-capture-canvas" style="display:none;"></canvas>
 
     <div class="guardian-row">
       <span class="guardian-label">👤 Guardian</span>
@@ -1209,6 +1475,270 @@
   }
   function escapeHtml(str) {
     return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // ─────────────────────────────────────────────
+  // CAMERA CAPTURE (in-page snap button)
+  // ─────────────────────────────────────────────
+  const cameraCaptureBtn = document.getElementById("camera-capture-btn");
+  const inlineCameraFeed = document.getElementById("inline-camera-feed");
+  const inlineCaptureCanvas = document.getElementById("inline-capture-canvas");
+  let inlineCameraStream = null;
+  let captureMode = false;
+
+  cameraCaptureBtn.addEventListener("click", async () => {
+    if (captureMode) {
+      // Snap the photo
+      const ctx = inlineCaptureCanvas.getContext("2d");
+      inlineCaptureCanvas.width = inlineCameraFeed.videoWidth;
+      inlineCaptureCanvas.height = inlineCameraFeed.videoHeight;
+      ctx.drawImage(inlineCameraFeed, 0, 0);
+      const dataUrl = inlineCaptureCanvas.toDataURL("image/jpeg", 0.85);
+      stopInlineCamera();
+      await processImageDataUrl(dataUrl, "image/jpeg");
+      cameraCaptureBtn.textContent = "📸";
+      captureMode = false;
+    } else {
+      try {
+        inlineCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+        inlineCameraFeed.srcObject = inlineCameraStream;
+        cameraCaptureBtn.textContent = "🟢";
+        captureMode = true;
+        // Show a tiny preview by briefly showing the video element
+        inlineCameraFeed.style.display = "block";
+        inlineCameraFeed.style.width = "100%";
+        inlineCameraFeed.style.borderRadius = "10px";
+        inlineCameraFeed.style.maxHeight = "160px";
+        inlineCameraFeed.style.objectFit = "cover";
+      } catch {
+        cameraCaptureBtn.textContent = "📸";
+        alert("Camera access denied. Please allow camera permissions.");
+      }
+    }
+  });
+
+  function stopInlineCamera() {
+    if (inlineCameraStream) {
+      inlineCameraStream.getTracks().forEach(t => t.stop());
+      inlineCameraStream = null;
+    }
+    inlineCameraFeed.srcObject = null;
+    inlineCameraFeed.style.display = "none";
+  }
+
+  async function processImageDataUrl(dataUrl, mimeType) {
+    imageBase64 = dataUrl.split(",")[1];
+    imageMimeType = mimeType;
+    imagePreview.src = dataUrl;
+    document.getElementById("image-upload-label").style.display = "none";
+    imagePreviewWrap.classList.add("visible");
+    imageUploadArea.classList.add("has-image");
+    imageAnalyzing.classList.add("visible");
+    imageContextBox.classList.remove("visible");
+    imageContext = null;
+    try {
+      const res = await fetch("/api/analyze-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageBase64, mimeType, situation: situationInput.value.trim() }),
+      });
+      const data = await res.json();
+      if (data.description) {
+        imageContext = data.description;
+        imageContextBox.textContent = "🔍 " + data.description;
+        imageContextBox.classList.add("visible");
+      }
+    } catch {}
+    imageAnalyzing.classList.remove("visible");
+  }
+
+  // ─────────────────────────────────────────────
+  // VIDEO CONVERSATION MODE
+  // ─────────────────────────────────────────────
+  const videoOverlay = document.getElementById("video-overlay");
+  const videoModeBtn = document.getElementById("video-mode-btn");
+  const closeVideoBtn = document.getElementById("close-video-btn");
+  const cameraFeed = document.getElementById("camera-feed");
+  const captureCanvas = document.getElementById("capture-canvas");
+  const cameraStatusText = document.getElementById("camera-status-text");
+  const vidAnalyzeBtn = document.getElementById("vid-analyze-btn");
+  const vidAnalyzeText = document.getElementById("vid-analyze-text");
+  const vidAnalyzeIcon = document.getElementById("vid-analyze-icon");
+  const vidFlipBtn = document.getElementById("vid-flip-btn");
+  const vidSnapBtn = document.getElementById("vid-snap-btn");
+  const videoTranscript = document.getElementById("video-transcript");
+  const vtEmpty = document.getElementById("vt-empty");
+  const snapOverlay = document.getElementById("camera-snap-overlay");
+
+  let videoStream = null;
+  let facingMode = "environment";
+  let vidRecognition = null;
+  let vidHistory = [];
+  let vidListening = false;
+
+  videoModeBtn.addEventListener("click", openVideoMode);
+  closeVideoBtn.addEventListener("click", closeVideoMode);
+
+  async function openVideoMode() {
+    videoOverlay.classList.add("visible");
+    videoModeBtn.classList.add("active");
+    document.body.style.overflow = "hidden";
+    await startCamera();
+  }
+
+  function closeVideoMode() {
+    stopVideoStream();
+    stopVidRecognition();
+    videoOverlay.classList.remove("visible");
+    videoModeBtn.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  async function startCamera() {
+    stopVideoStream();
+    try {
+      videoStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      });
+      cameraFeed.srcObject = videoStream;
+      cameraStatusText.textContent = "Camera live";
+      vidAnalyzeBtn.disabled = false;
+    } catch {
+      cameraStatusText.textContent = "Camera unavailable";
+    }
+  }
+
+  function stopVideoStream() {
+    if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+    cameraFeed.srcObject = null;
+  }
+
+  vidFlipBtn.addEventListener("click", () => {
+    facingMode = facingMode === "environment" ? "user" : "environment";
+    cameraFeed.style.transform = facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+    startCamera();
+  });
+
+  vidSnapBtn.addEventListener("click", captureAndAnalyze);
+
+  // Hold-to-speak
+  vidAnalyzeBtn.addEventListener("mousedown", startVidListening);
+  vidAnalyzeBtn.addEventListener("touchstart", (e) => { e.preventDefault(); startVidListening(); });
+  vidAnalyzeBtn.addEventListener("mouseup", stopVidListening);
+  vidAnalyzeBtn.addEventListener("mouseleave", stopVidListening);
+  vidAnalyzeBtn.addEventListener("touchend", stopVidListening);
+
+  function startVidListening() {
+    if (vidListening) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { captureAndAnalyze(); return; }
+    vidRecognition = new SR();
+    vidRecognition.continuous = true;
+    vidRecognition.interimResults = true;
+    vidRecognition.onresult = (e) => {
+      const t = Array.from(e.results).map(r => r[0].transcript).join("");
+      vidAnalyzeText.textContent = t || "Listening...";
+    };
+    vidRecognition.start();
+    vidListening = true;
+    vidAnalyzeBtn.style.background = "var(--red)";
+    vidAnalyzeIcon.textContent = "⏹️";
+    vidAnalyzeText.textContent = "Listening...";
+  }
+
+  function stopVidListening() {
+    if (!vidListening) return;
+    vidListening = false;
+    vidAnalyzeBtn.style.background = "";
+    vidAnalyzeIcon.textContent = "🎙️";
+    vidAnalyzeText.textContent = "Analyzing...";
+    vidAnalyzeBtn.disabled = true;
+    let spokenText = "";
+    if (vidRecognition) {
+      vidRecognition.onresult = (e) => {
+        spokenText = Array.from(e.results).map(r => r[0].transcript).join("");
+      };
+      vidRecognition.onend = () => captureAndAnalyze(spokenText);
+      vidRecognition.stop();
+    } else {
+      captureAndAnalyze();
+    }
+  }
+
+  function stopVidRecognition() {
+    if (vidRecognition) { try { vidRecognition.stop(); } catch {} vidRecognition = null; }
+    vidListening = false;
+  }
+
+  async function captureAndAnalyze(spokenText = "") {
+    // Flash effect
+    snapOverlay.classList.add("flash");
+    setTimeout(() => snapOverlay.classList.remove("flash"), 200);
+
+    // Capture frame
+    captureCanvas.width = cameraFeed.videoWidth || 640;
+    captureCanvas.height = cameraFeed.videoHeight || 360;
+    const ctx = captureCanvas.getContext("2d");
+    if (facingMode === "user") {
+      ctx.translate(captureCanvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(cameraFeed, 0, 0);
+    const frameBase64 = captureCanvas.toDataURL("image/jpeg", 0.7).split(",")[1];
+
+    const userMsg = spokenText || "What do you see? Is there any risk in this situation?";
+    appendVidBubble(userMsg, "user");
+
+    try {
+      // Get vision description of the frame
+      const visionRes = await fetch("/api/analyze-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: frameBase64, mimeType: "image/jpeg", situation: userMsg }),
+      });
+      const visionData = await visionRes.json();
+      const visualContext = visionData.description || "";
+
+      // Full analysis with text + visual context
+      const analyzeRes = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ situation: userMsg, imageContext: visualContext }),
+      });
+      const result = await analyzeRes.json();
+
+      const reply = `${result.summary} Risk level: ${result.risk_level?.toUpperCase()}. ${(result.actions || []).slice(0, 2).join(" Then: ")}. ${result.reassurance || ""}`;
+      appendVidBubble(reply, "agent");
+      speakReply(reply);
+
+      vidHistory.push({ role: "user", content: userMsg });
+      vidHistory.push({ role: "assistant", content: reply });
+    } catch (err) {
+      appendVidBubble("Could not analyze — please try again.", "agent");
+    }
+
+    vidAnalyzeBtn.disabled = false;
+    vidAnalyzeIcon.textContent = "🎙️";
+    vidAnalyzeText.textContent = "Hold to Speak";
+  }
+
+  function appendVidBubble(text, role) {
+    vtEmpty.style.display = "none";
+    const div = document.createElement("div");
+    div.className = `vt-bubble ${role}`;
+    div.textContent = text;
+    videoTranscript.appendChild(div);
+    videoTranscript.scrollTop = videoTranscript.scrollHeight;
+  }
+
+  function speakReply(text) {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1.05;
+    utter.pitch = 1;
+    window.speechSynthesis.speak(utter);
   }
 </script>
 

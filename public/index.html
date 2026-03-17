@@ -574,208 +574,234 @@
     }
     footer a { color: var(--nvidia-green); text-decoration: none; }
 
-    /* Video mode button in header */
+    /* Video mode button */
     .video-mode-btn {
-      background: transparent;
-      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #ff4444, #cc0000);
+      border: none;
       border-radius: 8px;
-      color: var(--text-muted);
+      color: #fff;
       cursor: pointer;
       font-size: 0.85rem;
-      padding: 7px 14px;
+      font-weight: 700;
+      padding: 8px 16px;
       transition: all 0.2s;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .video-mode-btn:hover { border-color: var(--red); color: var(--red); }
-    .video-mode-btn.active { border-color: var(--red); color: var(--red); background: rgba(255,68,68,0.1); }
+    .video-mode-btn:hover { background: linear-gradient(135deg, #ff6666, #ee2222); }
+    .video-mode-btn.active { box-shadow: 0 0 0 3px rgba(255,68,68,0.3); }
 
-    /* Video conversation overlay */
+    /* ARIA Call Overlay */
     .video-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.95);
+      background: #050508;
       z-index: 1000;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 0;
     }
     .video-overlay.visible { display: flex; }
-    .video-header {
+
+    /* Call header */
+    .aria-call-header {
       width: 100%;
-      padding: 16px 24px;
+      max-width: 680px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      gap: 12px;
     }
-    .video-header-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    .live-dot {
-      width: 8px; height: 8px;
-      background: var(--red);
+    .aria-identity { display: flex; align-items: center; gap: 12px; }
+    .aria-avatar {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--nvidia-green), #4a7800);
       border-radius: 50%;
-      animation: live-blink 1.2s ease-in-out infinite;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 0 0 3px rgba(118,185,0,0.3);
+      animation: aria-pulse 2s ease-in-out infinite;
     }
-    @keyframes live-blink {
-      0%,100% { opacity: 1; } 50% { opacity: 0.2; }
+    @keyframes aria-pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(118,185,0,0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(118,185,0,0.1); }
     }
-    .close-video-btn {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
+    .aria-avatar.thinking { animation: aria-think 0.6s ease-in-out infinite alternate; }
+    @keyframes aria-think {
+      from { background: linear-gradient(135deg, var(--nvidia-green), #4a7800); }
+      to { background: linear-gradient(135deg, #4a7800, #2a4800); }
+    }
+    .aria-name { font-size: 1rem; font-weight: 800; color: var(--nvidia-green); letter-spacing: 1px; }
+    .aria-subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+    .call-timer { font-size: 0.85rem; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
+    .aria-risk-badge {
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      text-transform: uppercase;
+    }
+    .end-call-btn {
+      background: var(--red);
+      border: none;
+      border-radius: 20px;
       color: #fff;
       cursor: pointer;
       font-size: 0.85rem;
-      padding: 7px 14px;
+      font-weight: 700;
+      padding: 8px 18px;
     }
-    .close-video-btn:hover { background: rgba(255,255,255,0.1); }
+    .end-call-btn:hover { background: #cc0000; }
 
-    .video-body {
+    /* Emergency banner */
+    .aria-emergency {
+      width: 100%;
+      background: var(--red);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.9rem;
+      animation: pulse-border 1s ease-in-out infinite;
+    }
+
+    /* Camera + body */
+    .aria-body {
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 640px;
+      max-width: 680px;
       flex: 1;
-      padding: 20px 20px 0;
-      gap: 16px;
-      overflow-y: auto;
+      padding: 0 16px 8px;
+      gap: 12px;
+      overflow: hidden;
     }
-
-    /* Camera feed */
     .camera-wrap {
       position: relative;
       width: 100%;
       border-radius: 16px;
       overflow: hidden;
-      background: #000;
+      background: #111;
+      flex-shrink: 0;
       aspect-ratio: 16/9;
     }
     #camera-feed {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: cover;
-      transform: scaleX(-1); /* mirror for front cam */
+      transform: scaleX(-1);
     }
     .camera-status {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      color: #fff;
+      position: absolute; top: 10px; left: 10px;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(0,0,0,0.65);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 0.72rem; color: #fff;
       backdrop-filter: blur(4px);
     }
-    .camera-snap-overlay {
-      position: absolute;
-      inset: 0;
-      background: #fff;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.1s;
+    .live-dot {
+      width: 7px; height: 7px;
+      background: var(--red); border-radius: 50%;
+      animation: live-blink 1.2s ease-in-out infinite;
     }
-    .camera-snap-overlay.flash { opacity: 0.6; }
+    @keyframes live-blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
+    .camera-snap-overlay {
+      position: absolute; inset: 0;
+      background: #fff; opacity: 0;
+      pointer-events: none; transition: opacity 0.08s;
+    }
+    .camera-snap-overlay.flash { opacity: 0.7; }
+    .aria-speaking-overlay {
+      position: absolute; inset: 0;
+      background: rgba(118,185,0,0.08);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 16px; gap: 8px;
+    }
+    .aria-speaking-waves {
+      display: flex; align-items: center; gap: 3px;
+    }
+    .aria-speaking-waves span {
+      display: block; width: 4px; background: var(--nvidia-green);
+      border-radius: 2px;
+      animation: wave 0.8s ease-in-out infinite;
+    }
+    .aria-speaking-waves span:nth-child(1) { height: 10px; animation-delay: 0s; }
+    .aria-speaking-waves span:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+    .aria-speaking-waves span:nth-child(3) { height: 30px; animation-delay: 0.2s; }
+    .aria-speaking-waves span:nth-child(4) { height: 20px; animation-delay: 0.3s; }
+    .aria-speaking-waves span:nth-child(5) { height: 10px; animation-delay: 0.4s; }
+    @keyframes wave {
+      0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); }
+    }
+    .aria-speaking-overlay span { color: var(--nvidia-green); font-size: 0.8rem; font-weight: 600; }
 
-    /* Video transcript */
-    .video-transcript {
+    /* Transcript */
+    .aria-transcript {
       width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 16px;
-      min-height: 80px;
-      max-height: 140px;
+      flex: 1;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      padding: 4px 0;
+      min-height: 60px;
     }
-    .video-transcript-empty {
-      color: rgba(255,255,255,0.25);
-      font-size: 0.85rem;
-      text-align: center;
-      margin: auto;
-    }
+    .vt-empty-msg { color: rgba(255,255,255,0.25); font-size: 0.85rem; text-align: center; padding: 12px; }
     .vt-bubble {
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      line-height: 1.5;
-      max-width: 88%;
+      padding: 9px 13px; border-radius: 10px;
+      font-size: 0.88rem; line-height: 1.5; max-width: 85%;
     }
     .vt-bubble.user {
-      background: rgba(118,185,0,0.15);
-      border: 1px solid rgba(118,185,0,0.2);
-      align-self: flex-end;
-      color: #d4f0a0;
+      background: rgba(118,185,0,0.13); border: 1px solid rgba(118,185,0,0.2);
+      align-self: flex-end; color: #d4f0a0;
     }
-    .vt-bubble.agent {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      align-self: flex-start;
-      color: #e8e8f0;
+    .vt-bubble.aria {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      align-self: flex-start; color: #e8e8f0;
     }
 
-    /* Video controls */
-    .video-controls {
-      width: 100%;
-      max-width: 640px;
-      padding: 16px 20px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
+    /* Controls */
+    .aria-controls {
+      width: 100%; max-width: 680px;
+      padding: 10px 20px 28px;
+      display: flex; align-items: center; justify-content: center; gap: 24px;
     }
     .vid-ctrl-btn {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 50%;
-      color: #fff;
-      cursor: pointer;
-      font-size: 1.3rem;
-      width: 52px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border-radius: 50%; color: #fff; cursor: pointer;
+      font-size: 1.2rem; width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
     }
     .vid-ctrl-btn:hover { background: rgba(255,255,255,0.15); }
-    .vid-ctrl-btn.active { background: rgba(255,68,68,0.2); border-color: var(--red); }
 
-    .vid-analyze-btn {
+    .aria-mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .aria-mic-btn {
+      width: 72px; height: 72px;
       background: var(--nvidia-green);
-      border: none;
-      border-radius: 50px;
-      color: #000;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 700;
-      padding: 14px 32px;
+      border: none; border-radius: 50%;
+      font-size: 1.8rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      box-shadow: 0 0 0 0 rgba(118,185,0,0.4);
     }
-    .vid-analyze-btn:hover { background: var(--nvidia-green-dark); }
-    .vid-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* Hidden canvas for frame capture */
-    #capture-canvas { display: none; }
+    .aria-mic-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .aria-mic-btn.listening {
+      background: var(--red);
+      animation: mic-ring 1s ease-in-out infinite;
+    }
+    @keyframes mic-ring {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,68,68,0.5); }
+      50% { box-shadow: 0 0 0 12px rgba(255,68,68,0); }
+    }
+    .aria-mic-btn.processing { background: var(--orange); animation: none; }
+    .aria-status-text { font-size: 0.75rem; color: rgba(255,255,255,0.45); text-align: center; min-width: 100px; }
 
     /* Mental health crisis card */
     .crisis-card {
@@ -891,39 +917,69 @@
   </div>
 </header>
 
-<!-- Video conversation overlay -->
+<!-- ARIA Video Call Overlay -->
 <div class="video-overlay" id="video-overlay">
-  <div class="video-header">
-    <div class="video-header-title">
-      <div class="live-dot"></div>
-      Live Situation Analysis
+
+  <!-- Call header -->
+  <div class="aria-call-header">
+    <div class="aria-identity">
+      <div class="aria-avatar" id="aria-avatar">🛡️</div>
+      <div>
+        <div class="aria-name">ARIA</div>
+        <div class="aria-subtitle" id="aria-subtitle">AI Risk Intelligence Agent</div>
+      </div>
     </div>
-    <button class="close-video-btn" id="close-video-btn">✕ Close</button>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="aria-risk-badge" id="aria-risk-badge" style="display:none;"></span>
+      <div class="call-timer" id="call-timer">00:00</div>
+    </div>
+    <button class="end-call-btn" id="close-video-btn">End Call</button>
   </div>
 
-  <div class="video-body">
+  <!-- Emergency overlay (shown when risk=high) -->
+  <div class="aria-emergency" id="aria-emergency" style="display:none;">
+    <span>🆘 HIGH RISK DETECTED</span>
+    <a href="tel:911" class="sos-call-btn" style="font-size:0.85rem;padding:8px 16px;">📞 Call 911</a>
+  </div>
+
+  <!-- Camera + transcript -->
+  <div class="aria-body">
     <div class="camera-wrap">
       <video id="camera-feed" autoplay playsinline muted></video>
-      <div class="camera-status" id="camera-status">
-        <div class="live-dot"></div> <span id="camera-status-text">Starting camera...</span>
+      <div class="camera-status">
+        <div class="live-dot"></div>
+        <span id="camera-status-text">Starting camera...</span>
       </div>
       <div class="camera-snap-overlay" id="camera-snap-overlay"></div>
+      <!-- ARIA speaking indicator on camera -->
+      <div class="aria-speaking-overlay" id="aria-speaking-overlay" style="display:none;">
+        <div class="aria-speaking-waves">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <span>ARIA is speaking...</span>
+      </div>
     </div>
 
-    <div class="video-transcript" id="video-transcript">
-      <div class="video-transcript-empty" id="vt-empty">Hold the mic button and describe what's happening. Nemotron will see your camera and respond.</div>
+    <!-- Transcript -->
+    <div class="aria-transcript" id="aria-transcript">
+      <div class="vt-empty-msg" id="vt-empty">ARIA is ready. Speak to start — describe your situation or point your camera at something concerning.</div>
     </div>
   </div>
 
-  <canvas id="capture-canvas"></canvas>
+  <canvas id="capture-canvas" style="display:none;"></canvas>
 
-  <div class="video-controls">
+  <!-- Controls -->
+  <div class="aria-controls">
     <button class="vid-ctrl-btn" id="vid-flip-btn" title="Flip camera">🔄</button>
-    <button class="vid-analyze-btn" id="vid-analyze-btn" disabled>
-      <span id="vid-analyze-icon">🎙️</span>
-      <span id="vid-analyze-text">Hold to Speak</span>
-    </button>
-    <button class="vid-ctrl-btn" id="vid-snap-btn" title="Capture & analyze now">📸</button>
+
+    <div class="aria-mic-wrap">
+      <button class="aria-mic-btn" id="aria-mic-btn" disabled>
+        <span id="aria-mic-icon">🎙️</span>
+      </button>
+      <div class="aria-status-text" id="aria-status-text">Connecting...</div>
+    </div>
+
+    <button class="vid-ctrl-btn" id="vid-snap-btn" title="Snap & analyze camera now">📸</button>
   </div>
 </div>
 
@@ -968,10 +1024,18 @@
           <button class="remove-image-btn" id="remove-image-btn">✕ Remove image</button>
         </div>
       </div>
-      <button class="voice-btn" id="camera-capture-btn" title="Take a photo with your camera" style="width:60px;height:auto;min-height:60px;flex-shrink:0;align-self:stretch;font-size:1.5rem;">📸</button>
+      <!-- Camera capture: uses capture="environment" on mobile (opens camera directly), getUserMedia on desktop -->
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <input type="file" id="camera-capture-input" accept="image/*" capture="environment" style="display:none;" />
+        <button class="voice-btn" id="camera-capture-btn" title="Take a photo" style="width:56px;height:56px;font-size:1.5rem;">📸</button>
+      </div>
     </div>
-    <!-- Hidden camera stream for in-page capture -->
-    <video id="inline-camera-feed" style="display:none;" autoplay playsinline muted></video>
+    <!-- Desktop camera preview (hidden until used) -->
+    <div id="desktop-camera-wrap" style="display:none;border-radius:10px;overflow:hidden;position:relative;">
+      <video id="inline-camera-feed" autoplay playsinline muted style="width:100%;max-height:200px;object-fit:cover;display:block;"></video>
+      <button id="desktop-snap-btn" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:white;border:none;border-radius:20px;padding:8px 20px;font-weight:700;cursor:pointer;font-size:0.9rem;">📸 Snap</button>
+      <button id="desktop-cancel-btn" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.5);border:none;border-radius:20px;padding:4px 10px;color:white;cursor:pointer;font-size:0.8rem;">✕</button>
+    </div>
     <canvas id="inline-capture-canvas" style="display:none;"></canvas>
 
     <div class="guardian-row">
@@ -1486,52 +1550,60 @@
   }
 
   // ─────────────────────────────────────────────
-  // CAMERA CAPTURE (in-page snap button)
+  // CAMERA CAPTURE (main form — bulletproof)
   // ─────────────────────────────────────────────
   const cameraCaptureBtn = document.getElementById("camera-capture-btn");
+  const cameraCaptureInput = document.getElementById("camera-capture-input");
   const inlineCameraFeed = document.getElementById("inline-camera-feed");
   const inlineCaptureCanvas = document.getElementById("inline-capture-canvas");
+  const desktopCameraWrap = document.getElementById("desktop-camera-wrap");
+  const desktopSnapBtn = document.getElementById("desktop-snap-btn");
+  const desktopCancelBtn = document.getElementById("desktop-cancel-btn");
   let inlineCameraStream = null;
-  let captureMode = false;
 
   cameraCaptureBtn.addEventListener("click", async () => {
-    if (captureMode) {
-      // Snap the photo
-      const ctx = inlineCaptureCanvas.getContext("2d");
-      inlineCaptureCanvas.width = inlineCameraFeed.videoWidth;
-      inlineCaptureCanvas.height = inlineCameraFeed.videoHeight;
-      ctx.drawImage(inlineCameraFeed, 0, 0);
-      const dataUrl = inlineCaptureCanvas.toDataURL("image/jpeg", 0.85);
-      stopInlineCamera();
-      await processImageDataUrl(dataUrl, "image/jpeg");
-      cameraCaptureBtn.textContent = "📸";
-      captureMode = false;
-    } else {
-      try {
-        inlineCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-        inlineCameraFeed.srcObject = inlineCameraStream;
-        cameraCaptureBtn.textContent = "🟢";
-        captureMode = true;
-        // Show a tiny preview by briefly showing the video element
-        inlineCameraFeed.style.display = "block";
-        inlineCameraFeed.style.width = "100%";
-        inlineCameraFeed.style.borderRadius = "10px";
-        inlineCameraFeed.style.maxHeight = "160px";
-        inlineCameraFeed.style.objectFit = "cover";
-      } catch {
-        cameraCaptureBtn.textContent = "📸";
-        alert("Camera access denied. Please allow camera permissions.");
-      }
+    // Mobile: use capture="environment" file input (opens camera directly)
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      cameraCaptureInput.click();
+      return;
+    }
+    // Desktop: open getUserMedia preview
+    if (inlineCameraStream) return; // already open
+    try {
+      inlineCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+      inlineCameraFeed.srcObject = inlineCameraStream;
+      desktopCameraWrap.style.display = "block";
+    } catch {
+      // Fallback to file input
+      cameraCaptureInput.click();
     }
   });
 
+  desktopSnapBtn.addEventListener("click", () => {
+    inlineCaptureCanvas.width = inlineCameraFeed.videoWidth || 640;
+    inlineCaptureCanvas.height = inlineCameraFeed.videoHeight || 480;
+    inlineCaptureCanvas.getContext("2d").drawImage(inlineCameraFeed, 0, 0);
+    const dataUrl = inlineCaptureCanvas.toDataURL("image/jpeg", 0.9);
+    stopInlineCamera();
+    processImageDataUrl(dataUrl, "image/jpeg");
+  });
+
+  desktopCancelBtn.addEventListener("click", stopInlineCamera);
+
+  cameraCaptureInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => processImageDataUrl(ev.target.result, file.type);
+    reader.readAsDataURL(file);
+    cameraCaptureInput.value = "";
+  });
+
   function stopInlineCamera() {
-    if (inlineCameraStream) {
-      inlineCameraStream.getTracks().forEach(t => t.stop());
-      inlineCameraStream = null;
-    }
+    if (inlineCameraStream) { inlineCameraStream.getTracks().forEach(t => t.stop()); inlineCameraStream = null; }
     inlineCameraFeed.srcObject = null;
-    inlineCameraFeed.style.display = "none";
+    desktopCameraWrap.style.display = "none";
   }
 
   async function processImageDataUrl(dataUrl, mimeType) {
@@ -1561,7 +1633,7 @@
   }
 
   // ─────────────────────────────────────────────
-  // VIDEO CONVERSATION MODE
+  // ARIA — Agentic Video AI Call
   // ─────────────────────────────────────────────
   const videoOverlay = document.getElementById("video-overlay");
   const videoModeBtn = document.getElementById("video-mode-btn");
@@ -1569,51 +1641,88 @@
   const cameraFeed = document.getElementById("camera-feed");
   const captureCanvas = document.getElementById("capture-canvas");
   const cameraStatusText = document.getElementById("camera-status-text");
-  const vidAnalyzeBtn = document.getElementById("vid-analyze-btn");
-  const vidAnalyzeText = document.getElementById("vid-analyze-text");
-  const vidAnalyzeIcon = document.getElementById("vid-analyze-icon");
+  const ariaMicBtn = document.getElementById("aria-mic-btn");
+  const ariaMicIcon = document.getElementById("aria-mic-icon");
+  const ariaStatusText = document.getElementById("aria-status-text");
   const vidFlipBtn = document.getElementById("vid-flip-btn");
   const vidSnapBtn = document.getElementById("vid-snap-btn");
-  const videoTranscript = document.getElementById("video-transcript");
+  const ariaTranscript = document.getElementById("aria-transcript");
   const vtEmpty = document.getElementById("vt-empty");
   const snapOverlay = document.getElementById("camera-snap-overlay");
+  const ariaAvatar = document.getElementById("aria-avatar");
+  const ariaRiskBadge = document.getElementById("aria-risk-badge");
+  const ariaEmergency = document.getElementById("aria-emergency");
+  const ariaSpeakingOverlay = document.getElementById("aria-speaking-overlay");
+  const callTimerEl = document.getElementById("call-timer");
 
   let videoStream = null;
-  let facingMode = "environment";
-  let vidRecognition = null;
-  let vidHistory = [];
-  let vidListening = false;
+  let ariaFacingMode = "environment";
+  let ariaRecognition = null;
+  let ariaHistory = [];
+  let ariaListening = false;
+  let ariaProcessing = false;
+  let callStartTime = null;
+  let callTimerInterval = null;
+  let userLocation = null;
 
-  videoModeBtn.addEventListener("click", openVideoMode);
-  closeVideoBtn.addEventListener("click", closeVideoMode);
+  videoModeBtn.addEventListener("click", openARIACall);
+  closeVideoBtn.addEventListener("click", closeARIACall);
 
-  async function openVideoMode() {
+  async function openARIACall() {
     videoOverlay.classList.add("visible");
     videoModeBtn.classList.add("active");
     document.body.style.overflow = "hidden";
-    await startCamera();
+    ariaHistory = [];
+    ariaTranscript.innerHTML = "";
+    ariaTranscript.appendChild(vtEmpty);
+    vtEmpty.style.display = "";
+    ariaEmergency.style.display = "none";
+    ariaRiskBadge.style.display = "none";
+    callStartTime = Date.now();
+    callTimerInterval = setInterval(updateCallTimer, 1000);
+
+    // Silently request location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => { userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
+        () => {}
+      );
+    }
+
+    await startARIACamera();
+    ariaGreet();
   }
 
-  function closeVideoMode() {
+  function closeARIACall() {
     stopVideoStream();
-    stopVidRecognition();
+    stopARIAListening();
+    window.speechSynthesis?.cancel();
+    clearInterval(callTimerInterval);
     videoOverlay.classList.remove("visible");
     videoModeBtn.classList.remove("active");
     document.body.style.overflow = "";
   }
 
-  async function startCamera() {
+  function updateCallTimer() {
+    const s = Math.floor((Date.now() - callStartTime) / 1000);
+    callTimerEl.textContent = `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  }
+
+  async function startARIACamera() {
     stopVideoStream();
     try {
       videoStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: { facingMode: ariaFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
         audio: false,
       });
       cameraFeed.srcObject = videoStream;
-      cameraStatusText.textContent = "Camera live";
-      vidAnalyzeBtn.disabled = false;
+      cameraStatusText.textContent = "Live";
+      ariaMicBtn.disabled = false;
+      setAriaStatus("listening");
     } catch {
-      cameraStatusText.textContent = "Camera unavailable";
+      cameraStatusText.textContent = "No camera";
+      ariaMicBtn.disabled = false;
+      setAriaStatus("listening");
     }
   }
 
@@ -1623,130 +1732,230 @@
   }
 
   vidFlipBtn.addEventListener("click", () => {
-    facingMode = facingMode === "environment" ? "user" : "environment";
-    cameraFeed.style.transform = facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
-    startCamera();
+    ariaFacingMode = ariaFacingMode === "environment" ? "user" : "environment";
+    cameraFeed.style.transform = ariaFacingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+    startARIACamera();
   });
 
-  vidSnapBtn.addEventListener("click", captureAndAnalyze);
+  vidSnapBtn.addEventListener("click", () => ariaProcessTurn("(analyzing camera — no speech)"));
 
-  // Hold-to-speak
-  vidAnalyzeBtn.addEventListener("mousedown", startVidListening);
-  vidAnalyzeBtn.addEventListener("touchstart", (e) => { e.preventDefault(); startVidListening(); });
-  vidAnalyzeBtn.addEventListener("mouseup", stopVidListening);
-  vidAnalyzeBtn.addEventListener("mouseleave", stopVidListening);
-  vidAnalyzeBtn.addEventListener("touchend", stopVidListening);
+  // Tap mic = start/stop listening
+  ariaMicBtn.addEventListener("click", () => {
+    if (ariaProcessing) return;
+    if (ariaListening) { stopARIAListening(); }
+    else { startARIAListening(); }
+  });
 
-  function startVidListening() {
-    if (vidListening) return;
+  function startARIAListening() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { captureAndAnalyze(); return; }
-    vidRecognition = new SR();
-    vidRecognition.continuous = true;
-    vidRecognition.interimResults = true;
-    vidRecognition.onresult = (e) => {
-      const t = Array.from(e.results).map(r => r[0].transcript).join("");
-      vidAnalyzeText.textContent = t || "Listening...";
+    if (!SR) { ariaProcessTurn(""); return; }
+    ariaRecognition = new SR();
+    ariaRecognition.continuous = false;
+    ariaRecognition.interimResults = true;
+    ariaRecognition.lang = "en-US";
+
+    let finalText = "";
+    ariaRecognition.onresult = (e) => {
+      finalText = Array.from(e.results).map(r => r[0].transcript).join("");
+      ariaStatusText.textContent = finalText.slice(-40) || "Listening...";
     };
-    vidRecognition.start();
-    vidListening = true;
-    vidAnalyzeBtn.style.background = "var(--red)";
-    vidAnalyzeIcon.textContent = "⏹️";
-    vidAnalyzeText.textContent = "Listening...";
+    ariaRecognition.onend = () => {
+      ariaListening = false;
+      ariaMicBtn.classList.remove("listening");
+      ariaMicIcon.textContent = "🎙️";
+      ariaProcessTurn(finalText);
+    };
+    ariaRecognition.onerror = () => {
+      ariaListening = false;
+      ariaMicBtn.classList.remove("listening");
+      ariaMicIcon.textContent = "🎙️";
+      setAriaStatus("listening");
+    };
+    ariaRecognition.start();
+    ariaListening = true;
+    ariaMicBtn.classList.add("listening");
+    ariaMicIcon.textContent = "⏹️";
+    ariaStatusText.textContent = "Listening...";
   }
 
-  function stopVidListening() {
-    if (!vidListening) return;
-    vidListening = false;
-    vidAnalyzeBtn.style.background = "";
-    vidAnalyzeIcon.textContent = "🎙️";
-    vidAnalyzeText.textContent = "Analyzing...";
-    vidAnalyzeBtn.disabled = true;
-    let spokenText = "";
-    if (vidRecognition) {
-      vidRecognition.onresult = (e) => {
-        spokenText = Array.from(e.results).map(r => r[0].transcript).join("");
-      };
-      vidRecognition.onend = () => captureAndAnalyze(spokenText);
-      vidRecognition.stop();
-    } else {
-      captureAndAnalyze();
-    }
+  function stopARIAListening() {
+    if (ariaRecognition) { try { ariaRecognition.stop(); } catch {} ariaRecognition = null; }
+    ariaListening = false;
+    ariaMicBtn.classList.remove("listening");
+    ariaMicIcon.textContent = "🎙️";
   }
 
-  function stopVidRecognition() {
-    if (vidRecognition) { try { vidRecognition.stop(); } catch {} vidRecognition = null; }
-    vidListening = false;
-  }
+  async function ariaProcessTurn(spokenText) {
+    if (ariaProcessing) return;
+    ariaProcessing = true;
+    setAriaStatus("processing");
 
-  async function captureAndAnalyze(spokenText = "") {
-    // Flash effect
+    // Flash + capture frame
     snapOverlay.classList.add("flash");
-    setTimeout(() => snapOverlay.classList.remove("flash"), 200);
-
-    // Capture frame
-    captureCanvas.width = cameraFeed.videoWidth || 640;
-    captureCanvas.height = cameraFeed.videoHeight || 360;
-    const ctx = captureCanvas.getContext("2d");
-    if (facingMode === "user") {
-      ctx.translate(captureCanvas.width, 0);
-      ctx.scale(-1, 1);
+    setTimeout(() => snapOverlay.classList.remove("flash"), 120);
+    let frameBase64 = null;
+    if (cameraFeed.videoWidth > 0) {
+      captureCanvas.width = cameraFeed.videoWidth;
+      captureCanvas.height = cameraFeed.videoHeight;
+      const ctx = captureCanvas.getContext("2d");
+      if (ariaFacingMode === "user") { ctx.translate(captureCanvas.width, 0); ctx.scale(-1, 1); }
+      ctx.drawImage(cameraFeed, 0, 0);
+      frameBase64 = captureCanvas.toDataURL("image/jpeg", 0.65).split(",")[1];
     }
-    ctx.drawImage(cameraFeed, 0, 0);
-    const frameBase64 = captureCanvas.toDataURL("image/jpeg", 0.7).split(",")[1];
 
-    const userMsg = spokenText || "What do you see? Is there any risk in this situation?";
-    appendVidBubble(userMsg, "user");
+    const userMsg = spokenText.trim() || "(user is showing camera — no speech)";
+    appendARIABubble(userMsg, "user");
 
     try {
-      // Get vision description of the frame
-      const visionRes = await fetch("/api/analyze-image", {
+      // 1. Get vision description
+      let imageContext = "";
+      if (frameBase64) {
+        const vRes = await fetch("/api/analyze-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: frameBase64, mimeType: "image/jpeg", situation: userMsg }),
+        });
+        const vData = await vRes.json();
+        imageContext = vData.description || "";
+      }
+
+      // 2. Call ARIA agent
+      const aRes = await fetch("/api/aria", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: frameBase64, mimeType: "image/jpeg", situation: userMsg }),
+        body: JSON.stringify({ message: userMsg, imageContext, history: ariaHistory }),
       });
-      const visionData = await visionRes.json();
-      const visualContext = visionData.description || "";
+      const result = await aRes.json();
+      const reply = result.reply || "I'm here. Tell me more about what's happening.";
 
-      // Full analysis with text + visual context
-      const analyzeRes = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ situation: userMsg, imageContext: visualContext }),
-      });
-      const result = await analyzeRes.json();
+      // 3. Update UI
+      appendARIABubble(reply, "aria");
+      updateRiskUI(result);
+      showHealthFlags(result.health_flags);
+      speakARIA(reply);
 
-      const reply = `${result.summary} Risk level: ${result.risk_level?.toUpperCase()}. ${(result.actions || []).slice(0, 2).join(" Then: ")}. ${result.reassurance || ""}`;
-      appendVidBubble(reply, "agent");
-      speakReply(reply);
+      // 4. Auto-alert authorities if emergency + location known
+      if (result.emergency && userLocation) {
+        triggerAuthorityAlert(result, userMsg);
+      }
 
-      vidHistory.push({ role: "user", content: userMsg });
-      vidHistory.push({ role: "assistant", content: reply });
+      // 5. Store history
+      ariaHistory.push({ role: "user", content: userMsg + (imageContext ? `\n[Camera: ${imageContext}]` : "") });
+      ariaHistory.push({ role: "assistant", content: reply });
+      if (ariaHistory.length > 20) ariaHistory = ariaHistory.slice(-20);
+
     } catch (err) {
-      appendVidBubble("Could not analyze — please try again.", "agent");
+      appendARIABubble("Connection issue — stay calm and try again.", "aria");
+      speakARIA("Connection issue. Stay calm and try again.");
     }
 
-    vidAnalyzeBtn.disabled = false;
-    vidAnalyzeIcon.textContent = "🎙️";
-    vidAnalyzeText.textContent = "Hold to Speak";
+    ariaProcessing = false;
   }
 
-  function appendVidBubble(text, role) {
+  function updateRiskUI(result) {
+    const risk = (result.risk || "low").toLowerCase();
+    const colors = { low: "#30d158", medium: "#ff9500", high: "#ff4444" };
+    ariaRiskBadge.textContent = risk.toUpperCase();
+    ariaRiskBadge.style.display = "inline-block";
+    ariaRiskBadge.style.background = `${colors[risk]}22`;
+    ariaRiskBadge.style.color = colors[risk];
+    ariaRiskBadge.style.border = `1px solid ${colors[risk]}66`;
+    ariaEmergency.style.display = result.emergency ? "flex" : "none";
+  }
+
+  function triggerAuthorityAlert(result, situation) {
+    const mapsUrl = userLocation
+      ? `https://maps.google.com/?q=${userLocation.lat},${userLocation.lng}`
+      : "Location unavailable";
+    const alertMsg = `🆘 EMERGENCY — ARIA Safety Alert\nSituation: ${situation}\nRisk: ${result.risk?.toUpperCase()}\nType: ${result.situation_type}\nLocation: ${mapsUrl}\nKey action: ${result.key_action}`;
+    const encoded = encodeURIComponent(alertMsg);
+
+    const guardianNum = document.getElementById("guardian-input").value.trim();
+
+    // Alert guardian via SMS
+    if (guardianNum) {
+      const smsLink = document.createElement("a");
+      smsLink.href = `sms:${guardianNum}?body=${encoded}`;
+      smsLink.style.display = "none";
+      document.body.appendChild(smsLink);
+      smsLink.click();
+      setTimeout(() => document.body.removeChild(smsLink), 1000);
+    }
+
+    // Show authority alert card in transcript
+    const alertDiv = document.createElement("div");
+    alertDiv.style.cssText = "background:rgba(255,68,68,0.12);border:1px solid rgba(255,68,68,0.4);border-radius:10px;padding:12px 14px;font-size:0.85rem;line-height:1.6;";
+    alertDiv.innerHTML = `
+      <div style="font-weight:700;color:#ff4444;margin-bottom:6px;">🆘 ARIA Emergency Alert Activated</div>
+      <div style="color:#e8e8f0;">Guardian SMS prepared with your location.</div>
+      ${userLocation ? `<div style="color:#8888aa;font-size:0.78rem;margin-top:4px;">📍 ${mapsUrl}</div>` : ""}
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <a href="tel:911" style="background:#ff4444;color:#fff;border-radius:6px;padding:6px 14px;text-decoration:none;font-weight:700;font-size:0.82rem;">📞 Call 911</a>
+        ${guardianNum ? `<a href="sms:${guardianNum}?body=${encoded}" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;padding:6px 14px;text-decoration:none;font-size:0.82rem;">📲 Send Alert</a>` : ""}
+      </div>
+    `;
+    ariaTranscript.appendChild(alertDiv);
+    ariaTranscript.scrollTop = ariaTranscript.scrollHeight;
+  }
+
+  function showHealthFlags(flags) {
+    if (!flags) return;
+    const items = [];
+    if (flags.physical) items.push("🩺 Physical concern detected");
+    if (flags.mental) items.push("🧠 Mental health concern detected");
+    if (flags.psychological) items.push("💜 Psychological distress detected");
+    if (items.length === 0) return;
+    const div = document.createElement("div");
+    div.style.cssText = "background:rgba(138,43,226,0.1);border:1px solid rgba(138,43,226,0.3);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:#c084fc;display:flex;flex-wrap:wrap;gap:6px;";
+    div.textContent = items.join("  ·  ");
+    ariaTranscript.appendChild(div);
+    ariaTranscript.scrollTop = ariaTranscript.scrollHeight;
+  }
+
+  function setAriaStatus(state) {
+    ariaAvatar.classList.remove("thinking");
+    ariaSpeakingOverlay.style.display = "none";
+    if (state === "listening") {
+      ariaStatusText.textContent = "Tap mic to speak";
+      ariaMicBtn.classList.remove("processing");
+    } else if (state === "processing") {
+      ariaStatusText.textContent = "ARIA is thinking...";
+      ariaAvatar.classList.add("thinking");
+      ariaMicBtn.classList.add("processing");
+    } else if (state === "speaking") {
+      ariaStatusText.textContent = "ARIA is speaking...";
+      ariaSpeakingOverlay.style.display = "flex";
+    }
+  }
+
+  function speakARIA(text) {
+    if (!("speechSynthesis" in window)) { setAriaStatus("listening"); return; }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1.0; utter.pitch = 1.05;
+    // Prefer a calm female voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.name.includes("Samantha") || v.name.includes("Karen") || v.name.includes("Female") || v.lang === "en-US");
+    if (preferred) utter.voice = preferred;
+    utter.onstart = () => setAriaStatus("speaking");
+    utter.onend = () => setAriaStatus("listening");
+    window.speechSynthesis.speak(utter);
+  }
+
+  function ariaGreet() {
+    const greeting = "Hi, I'm ARIA — your AI safety companion. I'm here with you. Tell me what's happening, or point your camera at anything concerning and I'll help assess the situation.";
+    appendARIABubble(greeting, "aria");
+    speakARIA(greeting);
+    ariaHistory.push({ role: "assistant", content: greeting });
+  }
+
+  function appendARIABubble(text, role) {
     vtEmpty.style.display = "none";
     const div = document.createElement("div");
     div.className = `vt-bubble ${role}`;
-    div.textContent = text;
-    videoTranscript.appendChild(div);
-    videoTranscript.scrollTop = videoTranscript.scrollHeight;
-  }
-
-  function speakReply(text) {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1.05;
-    utter.pitch = 1;
-    window.speechSynthesis.speak(utter);
+    div.textContent = (role === "aria" ? "🛡️ " : "You: ") + text;
+    ariaTranscript.appendChild(div);
+    ariaTranscript.scrollTop = ariaTranscript.scrollHeight;
   }
 </script>
 

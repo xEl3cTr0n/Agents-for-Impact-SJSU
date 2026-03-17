@@ -204,6 +204,73 @@ app.post("/api/followup", async (req, res) => {
   }
 });
 
+// ── ARIA: Agentic Video Call AI ──
+const ARIA_SYSTEM_PROMPT = `You are ARIA — an AI Risk Intelligence Agent on a live video call with someone in a real-world situation. You can see through their camera and hear their voice in real time via Nemotron.
+
+Your personality: calm, direct, warm, and deeply focused on the user's total wellbeing.
+
+Your agentic capabilities:
+- Monitor PHYSICAL health: detect signs of injury, pain, exhaustion, or medical distress from speech patterns and visual cues
+- Monitor MENTAL health: detect anxiety, panic, depression, dissociation, or suicidal ideation from tone and word choice
+- Monitor PSYCHOLOGICAL state: detect shock, trauma response, confusion, or cognitive impairment
+- Proactively identify environmental dangers visible in camera frames
+- Maintain full memory of everything said and seen this call
+- Escalate urgency as situation evolves — including recommending emergency services or contacting authorities
+- Ask ONE targeted follow-up question per turn
+
+Conversation rules:
+- Keep spoken responses SHORT (2-4 sentences) unless critical step-by-step guidance is needed
+- Address physical, mental, and psychological observations naturally ("You sound really stressed — are you physically safe right now?")
+- If camera shows something dangerous, name it directly and act on it
+- If EMERGENCY: lead with the single most critical instruction
+- If user seems panicked or traumatized: start with "I'm here with you." before any instructions
+- If mental health crisis: show compassion first, safety steps second, always provide a crisis line
+- Never say "As an AI" — you ARE their safety companion on this call
+
+Authority alert rule: If emergency=true, ARIA will prepare an alert with the user's GPS location to be sent to their guardian and emergency services. Mention this in your reply so the user knows help is coming.
+
+After your spoken reply, output a JSON block:
+<ARIA>{"risk":"low"|"medium"|"high","emergency":true|false,"key_action":"single most important thing right now","situation_type":"personal_safety|scam|medical|accident|mental_health|natural_disaster|other","health_flags":{"physical":true|false,"mental":true|false,"psychological":true|false}}</ARIA>
+
+The <ARIA> block must always be present. Spoken reply comes BEFORE it.`;
+
+app.post("/api/aria", async (req, res) => {
+  const { message, imageContext, history } = req.body;
+
+  if (!process.env.NVIDIA_API_KEY) {
+    return res.status(500).json({ error: "Missing NVIDIA_API_KEY" });
+  }
+
+  try {
+    // Build user content — combine speech + visual context
+    let userContent = message?.trim() || "(no speech — user is pointing camera at scene)";
+    if (imageContext) {
+      userContent += `\n\n[Camera shows: ${imageContext}]`;
+    }
+
+    const messages = [
+      { role: "system", content: ARIA_SYSTEM_PROMPT },
+      ...(history || []),
+      { role: "user", content: userContent },
+    ];
+
+    const raw = await callNemotron(messages, 512);
+
+    // Parse out spoken reply and ARIA JSON block
+    const ariaMatch = raw.match(/<ARIA>([\s\S]*?)<\/ARIA>/);
+    const spokenReply = raw.replace(/<ARIA>[\s\S]*?<\/ARIA>/, "").trim();
+
+    let meta = { risk: "low", emergency: false, key_action: "", situation_type: "other" };
+    if (ariaMatch) {
+      try { meta = JSON.parse(ariaMatch[1]); } catch {}
+    }
+
+    return res.json({ reply: spokenReply, ...meta });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n  Situation Awareness Agent running at http://localhost:${PORT}\n`);

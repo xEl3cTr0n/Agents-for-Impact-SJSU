@@ -1,3 +1,5 @@
+require("dotenv/config");
+
 const API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const API_KEY = process.env.NVIDIA_API_KEY;
 

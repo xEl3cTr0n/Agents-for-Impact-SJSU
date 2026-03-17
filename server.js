@@ -275,14 +275,25 @@ app.post("/api/aria", async (req, res) => {
 
     const raw = await callNemotron(messages, 512);
 
-    // Parse out spoken reply and ARIA JSON block
-    const ariaMatch = raw.match(/<ARIA>([\s\S]*?)<\/ARIA>/);
-    const spokenReply = raw.replace(/<ARIA>[\s\S]*?<\/ARIA>/, "").trim();
+    // Parse out spoken reply and ARIA JSON block — try multiple formats
+    let meta = { risk: "low", emergency: false, key_action: "", situation_type: "other", health_flags: {} };
+    let spokenReply = raw;
 
-    let meta = { risk: "low", emergency: false, key_action: "", situation_type: "other" };
-    if (ariaMatch) {
-      try { meta = JSON.parse(ariaMatch[1]); } catch {}
+    // Try <ARIA>{...}</ARIA>
+    const xmlMatch = raw.match(/<ARIA>([\s\S]*?)<\/ARIA>/i);
+    if (xmlMatch) {
+      try { meta = { ...meta, ...JSON.parse(xmlMatch[1]) }; } catch {}
+      spokenReply = raw.replace(/<ARIA>[\s\S]*?<\/ARIA>/i, "").trim();
+    } else {
+      // Try any trailing JSON block {...}
+      const jsonMatch = raw.match(/\{[\s\S]*"risk"[\s\S]*\}/);
+      if (jsonMatch) {
+        try { meta = { ...meta, ...JSON.parse(jsonMatch[0]) }; } catch {}
+        spokenReply = raw.replace(/\(?\*?ARIA:?\*?\)?\s*\{[\s\S]*\}\s*\)?\*?/i, "").trim();
+      }
     }
+    // Clean any stray markup from spoken reply
+    spokenReply = spokenReply.replace(/\(\*ARIA[^)]*\)\*/gi, "").replace(/<[^>]+>/g, "").trim();
 
     return res.json({ reply: spokenReply, ...meta });
   } catch (err) {
